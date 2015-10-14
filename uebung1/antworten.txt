@@ -1,0 +1,6 @@
+1.2 
+cd ist ein bash builtin command und wird deshalb in dem Manual 
+Eintrag von bash erklärt, statt einen eigenen zu erhalten. Einige 
+bash builtin Commands erhalten trotzdem einen eigenen Manual Eintrag.
+
+

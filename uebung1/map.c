@@ -13,6 +13,7 @@ cardd map[3][3];
 // Überprüfen Sie außerdem dir auf Gültigkeit
 void set_dir (int x, int y, cardd dir)
 {
+    // 0 wird als gültige Himmelsrichtung erkannt, um z.B. nachträgliches löschen möglich zu machen
     if(x >= 0 && x < 3      // X liegt zwischen 0 und 2 
         && y >= 0 && y < 3  // Y liegt zwischen 0 und 2 
         && (dir == 0 || dir == N || dir == E || dir == S || dir == W 
