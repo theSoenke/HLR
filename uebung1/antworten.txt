@@ -3,4 +3,12 @@ cd ist ein bash builtin command und wird deshalb in dem Manual
 Eintrag von bash erklärt, statt einen eigenen zu erhalten. Einige 
 bash builtin Commands erhalten trotzdem einen eigenen Manual Eintrag.
 
+1.3 
+
+f)
+Das Archiv ist etwas größer als der ursprüngliche Ordner.
+
+h)
+Es ist möglich eine .tar.gz Datei mit folgendem Befehl zu erzeugen:
+tar -czf testarchiv.tar.gz testarchiv
 
