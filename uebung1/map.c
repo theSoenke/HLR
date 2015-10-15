@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 // Definieren Sie ein enum cardd
 // Nord = 0001, Ost = 0010, Sued = 0100, West = 1000
@@ -23,6 +24,38 @@ void set_dir (int x, int y, cardd dir)
     }
 }
 
+char* get_dir(int x, int y) {
+    if(x >= 0 && x < 3      // X liegt zwischen 0 und 2 
+        && y >= 0 && y < 3)  // Y liegt zwischen 0 und 2
+    {
+        char* rueckgabe;
+        // Hier werden einfach nur die Dezimalwerte der oben angegebenen
+        // binären Werte abgefragt und der dazugehörige Wert wird
+        // geprintet.
+        switch (map[x][y]) {
+            case 1: rueckgabe = "N";
+                    break;
+            case 2: rueckgabe = "E";
+                    break;
+            case 4: rueckgabe = "S";
+                    break;
+            case 8: rueckgabe = "W";
+                    break;
+            case 3: rueckgabe = "NE";
+                    break;
+            case 6: rueckgabe = "SE";
+                    break;
+            case 9: rueckgabe = "NW";
+                    break;
+            case 12: rueckgabe = "SW";
+                    break;
+            default: rueckgabe = "0";
+                    break;
+        }
+        return rueckgabe;
+    }
+}
+
 // Die Funktion show_map soll das Array in Form einer 3x3-Matrix ausgeben
 void show_map (void)
 {
@@ -32,50 +65,8 @@ void show_map (void)
         for(y=0; y<3; y++) {
             // Die Leerzeichen werden nicht statisch vorgegeben sondern sind abhänging
             // von dem ersten und letzten Punkt jeder Zeile.
-            
-            // Fügt Leerzeichen vor dem Bezeichner ein für das letzte Zeichen der Zeile
-            // Nur die Kombinierten Himmelsrichtungen sind durch 3 ohne Rest teilbar
-            if(y==2) {
-                if(map[x][y] % 3 == 0) {
-                    printf("  ");
-                }
-                else {
-                    printf("   ");
-                }
-            }
-            // Hier werden einfach nur die Dezimalwerte der oben angegebenen
-            // binären Werte abgefragt und der dazugehörige Wert wird
-            // geprintet.
-            switch (map[x][y]) {
-                case 1: printf("N");
-                        break;
-                case 2: printf("E");
-                        break;
-                case 4: printf("S");
-                        break;
-                case 8: printf("W");
-                        break;
-                case 3: printf("NE");
-                        break;
-                case 6: printf("SE");
-                        break;
-                case 9: printf("NW");
-                        break;
-                case 12: printf("SW");
-                        break;
-                default: printf("0");
-                        break;
-            }
-            // Fügt Leerzeichen hinter dem Bezeichner ein für das erste Zeichen der Zeile
-            // Nur die Kombinierten Himmelsrichtungen sind durch 3 ohne Rest teilbar
-            if(y==0) {
-                if(map[x][y] % 3 == 0) {
-                    printf("  ");
-                }
-                else {
-                    printf("   ");
-                }
-            }
+            char* dir = get_dir(x,y);
+            printf("%s%s%s", (y == 2 ? ((strlen(dir) == 1) ? "   " : "  ") : ""), dir, (y == 0 ? ((strlen(dir) == 1) ? "   " : "  ") : ""));
         }
         // Fügt einen Absatz am Ende der Zeile ein
         printf("\n");
