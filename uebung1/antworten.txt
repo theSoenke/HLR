@@ -11,4 +11,6 @@ Das Archiv ist etwas größer als der ursprüngliche Ordner.
 h)
 Es ist möglich eine .tar.gz Datei mit folgendem Befehl zu erzeugen:
 tar -czf testarchiv.tar.gz testarchiv
+Möchte man eine ausführliche Fehlerbeschreibung im Fehlerfall,
+dann muss man -cvzf nutzen.
 
