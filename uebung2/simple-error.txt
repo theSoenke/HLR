@@ -1,0 +1,20 @@
+Fehler1:
+In mistake1 wird nur in Zeile 12 ein lokales Array erzeugt und dieses in der nächsten Zeile zurückgegeben. Dies gibt einen Fehler, da das Array nur lokal genutzt werden kann, zusätzlich handelt es sich nicht um einen Pointer.
+
+Dies kann gelöst werden dadurch das buf als Pointer deklariert wird und der notwendige Speicher für 6 ints auf dem Heap allokiert wird. Das Array wird in einer lokalen Variablen names tmp gespeichert und mittels memcpy in buf kopiert. Dann kann der Pointer von buf zurückgegeben werden.
+Damit memcpy genutzt werden kann muss die Bibliothek string.h importiert werden.
+
+
+Fehler2:
+In mistake2 wird in Zeile 19 nur Speicher für 4 chars allokiert. Da der Speicher für Integer genutzt werden soll wird sizeof(char) durch sizeof(int) ersetzt. Zudem wird 2 in buf[1] statt buf[2] gespeichert, da in main auf den Index 2 zugegriffen wird.
+
+Fehler3:
+In mistake3 muss zunächst Speicher auf dem Heap für buf in Zeile 28 allokiert werden. Dies geschieht mit malloc(sizeof(int)). Außerdem ist in der Funktion die lokale Variable mistake2_ nicht notwendig und kann entfernt werden.
+
+Fehler4:
+In mistake4 muss beim Speicher allokieren in Zeile 26 der Typ char durch int ersetzen, da Speicher für 4 Integer benötigt wird. Dann wird in der Zeile  buf 4 an dem Index 0 zugewiesen, da auf diese Stelle im Speicher in main zugegriffen wird.
+Als letztes muss free(buf) in Zeile 38 entfernt werden, da der Speicher hier bereits zu früh freigegeben wird.
+
+Fehler5:
+In main wird in Zeile 55 bisher nur der allokierte Speicher für p[1] wieder freigegeben. Da für misktake2 der Pointer in Zeile 46 erst mit dem zweiten Index startet muss die Zeile in 55 zu free(p[1]-1) verändert werden, damit der gesamte von der Funktion allokierte Speicher wieder freigegen wird. Dasselbe gilt für p[0] mit der Funktion mistake1.
+Der Speicher für p[3] und p[4] wird einfach mit free(p[3]) und free(p[4]) freigegeben.
