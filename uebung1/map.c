@@ -33,21 +33,21 @@ char* get_dir(int x, int y) {
         // binären Werte abgefragt und der dazugehörige Wert wird
         // geprintet.
         switch (map[x][y]) {
-            case 1: rueckgabe = "N";
+            case N: rueckgabe = "N";
                     break;
-            case 2: rueckgabe = "E";
+            case E: rueckgabe = "E";
                     break;
-            case 4: rueckgabe = "S";
+            case S: rueckgabe = "S";
                     break;
-            case 8: rueckgabe = "W";
+            case W: rueckgabe = "W";
                     break;
-            case 3: rueckgabe = "NE";
+            case N|E: rueckgabe = "NE";
                     break;
-            case 6: rueckgabe = "SE";
+            case S|E: rueckgabe = "SE";
                     break;
-            case 9: rueckgabe = "NW";
+            case N|W: rueckgabe = "NW";
                     break;
-            case 12: rueckgabe = "SW";
+            case S|W: rueckgabe = "SW";
                     break;
             default: rueckgabe = "0";
                     break;
