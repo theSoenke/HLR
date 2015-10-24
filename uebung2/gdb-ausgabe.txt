@@ -1,35 +1,47 @@
-(gdb) break mistake1
-Breakpoint 1 at 0x40059a: file simple.c, line 12.
+(gdb) b mistake1
+Breakpoint 1 at 0x4005c1: file simple.c, line 10.
 
 (gdb) run
-Starting program: /home/soenke/Downloads/simple 
+Starting program: [...]/simple 
 
 Breakpoint 1, mistake1 () at simple.c:12
 12	  int buf[] = { 1, 1, 2, 3, 4, 5 };
 
 (gdb) print buf
-$1 = {-134225616, 32767, 0, 0, 1, 0}
+$1 = {-134225464, 32767, 0, 0, 1, 0}
 
 (gdb) print buf[2]
 $2 = 0
 
-(gdb) break mistake2
-Breakpoint 2 at 0x4005d3: file simple.c, line 19.
+(gdb) n
+13	  return buf;
 
-(gdb) continue
+(gdb) print buf
+$3 = {1, 1, 2, 3, 4, 5}  
+
+(gdb) ptype buf
+type = int [6]
+
+(gdb) print buf[2]
+$4 = 2
+
+(gdb) b mistake2
+Breakpoint 2 at 0x4005f9: file simple.c, line 17.
+
+(gdb) c
 Continuing.
 
 Breakpoint 2, mistake2 () at simple.c:19
 19	  int *buf = malloc (sizeof (char) * 4);
 
-(gdb) whatis buf
-type = int [6]
+(gdb) ptype buf
+type = int *
 
 (gdb) c
 Continuing.
 
 Program received signal SIGSEGV, Segmentation fault.
-0x000000000040060c in mistake3 () at simple.c:29
+0x0000000000400632 in mistake3 () at simple.c:29
 29	  buf[0] = 3;
 
 (gdb) list
@@ -44,14 +56,17 @@ Program received signal SIGSEGV, Segmentation fault.
 32	
 33	int *
 
+(gdb) bt
+#0  0x0000000000400632 in mistake3 () at simple.c:29
+#1  0x00000000004006aa in main () at simple.c:46
 
 (gdb) frame 1
-#1  0x0000000000400684 in main () at simple.c:46
+#1  0x00000000004006aa in main () at simple.c:46
 46	  int *p[4] = { &mistake1 ()[1], &mistake2 ()[1], mistake3 (), mistake4 () };
 
 (gdb) print p
-$4 = {0x4, 0x601014, 0x7fffffffe8d0, 0x0}
+$5 = {0x7fffffffdd94, 0x602014, 0x7fffffffdec0, 0x0}
 
-(gdb) call mistake4
-$5 = {int *()} 0x400618 <mistake4>
+(gdb) call mistake4()
+$6 = (int *) 0x602030
 
