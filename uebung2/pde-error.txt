@@ -1,0 +1,5 @@
+Fehler1:
+In Zeile 230 in partdiff-seq.c muss mit m2 über die 1. Dimension, mit i über die 2. Dimension und mit j - 1 über die dritte Dimension interiert werden. Also statt Matrix[j - 1][m2][i] muss es Matrix[m2][i][j - 1] lauten.
+
+Fehler2:
+Es wird in Zeile 96 nicht ausreichend Speicher allokiert. Statt Platz für (N + 1) * (N - 1) * 2 doubles wird Platz für (N + 1) * (N + 1) * 2 doubles benötigt. 
