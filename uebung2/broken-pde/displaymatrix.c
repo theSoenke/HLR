@@ -63,7 +63,7 @@ DisplayMatrix (char *s, double *v, int interlines)
       printf ("\n");
     }
   fflush (stdout);
-  file = fopen ("function.data", "w");
+  file = fopen ("function.data", "w+");
   for (y = 0; y < 9; y++)
     {
       for (x = 0; x < 9; x++)
