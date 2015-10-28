@@ -77,3 +77,13 @@ SchedulerType           = sched/backfill
 1.13
 Ja, die Priorität eines Jobs lässt sich verändern und zwar
 mit scontrol update jobid=1234 priority=1000000
+
+1.14
+froehlich@cluster:~⟫ sinfo
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+cluster*     up    3:00:00     10   idle west[1-10]
+compute      up    6:00:00      9  down* amd[1-5],nehalem[1-4]
+compute      up    6:00:00      1   comp nehalem5
+abu          up    6:00:00      5   idle abu[1-5]
+magny        up 1-00:00:00      1   idle magny1
+
