@@ -35,3 +35,45 @@ des ausführenden Users oder GroupID anzeigt.
 scancel <JobID>
 
 
+1.8
+Ja, das ist grunsätzlich möglich. Sofern Shared=YES gesetzt ist,
+können mehrere Jobs auf einem Knoten laufen.
+
+1.9
+scontrol show job <jobID>
+
+Beispiel:
+froehlich@cluster:~⟫ scontrol show job 94975
+JobId=94975 JobName=bash
+   UserId=strassberger(1289) GroupId=papo-15(1026)
+   Priority=4294900909 Nice=0 Account=(null) QOS=(null)
+   JobState=COMPLETING Reason=None Dependency=(null)
+   Requeue=1 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=00:00:15 TimeLimit=06:00:00 TimeMin=N/A
+   SubmitTime=2015-10-22T22:00:42 EligibleTime=2015-10-22T22:00:42
+   StartTime=2015-10-22T22:00:42 EndTime=2015-10-22T22:00:57
+   PreemptTime=None SuspendTime=None SecsPreSuspend=0
+   Partition=compute AllocNode:Sid=cluster:25584
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nehalem5
+   BatchHost=nehalem5
+   NumNodes=1 NumCPUs=8 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   TRES=cpu=8,node=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0
+   Features=(null) Gres=(null) Reservation=(null)
+   Shared=0 Contiguous=0 Licenses=(null) Network=(null)
+   Command=(null)
+   WorkDir=/home/strassberger/02-gdb-valgrind/StrassbergerFrangopoulos
+   Power= SICP=0
+
+1.10
+Es gibt unter anderem Backfill scheduling und Gang scheduling.
+Das System benutzt derzeit backfill scheduling.
+froehlich@cluster:~⟫ scontrol show config | grep SchedulerType
+SchedulerType           = sched/backfill
+
+
+1.13
+Ja, die Priorität eines Jobs lässt sich verändern und zwar
+mit scontrol update jobid=1234 priority=1000000
