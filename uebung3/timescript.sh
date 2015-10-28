@@ -2,4 +2,4 @@
 
  /bin/hostname | tr '\n' ' ' 
 echo ":"| tr '\n' ' ' 
- /bin/date +"%T" 
+ /bin/date +"%T.%6N"
