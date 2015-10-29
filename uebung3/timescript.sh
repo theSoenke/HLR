@@ -1,5 +1,5 @@
-#! /bin/bash
+#!/bin/bash
 
- /bin/hostname | tr '\n' ' ' 
-echo ":"| tr '\n' ' ' 
- /bin/date +"%T.%6N"
+host=$(hostname)
+date=$(date +%s.%6N)
+echo "$host: $date"
