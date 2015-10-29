@@ -1,0 +1,55 @@
+gprof output:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 96.45     82.54    82.54        1    82.54    85.58  calculate
+  3.55     85.58     3.04 1088472064     0.00     0.00  getResiduum
+  0.13     85.69     0.12        1     0.12     0.12  initMatrices
+  0.00     85.69     0.00        4     0.00     0.00  allocateMemory
+  0.00     85.69     0.00        1     0.00     0.00  AskParams
+  0.00     85.69     0.00        1     0.00     0.00  DisplayMatrix
+  0.00     85.69     0.00        1     0.00     0.00  allocateMatrices
+  0.00     85.69     0.00        1     0.00     0.00  displayStatistics
+  0.00     85.69     0.00        1     0.00     0.00  freeMatrices
+  0.00     85.69     0.00        1     0.00     0.00  initVariables
+
+Da die Funktionen calculate und getResiduum über 99% Prozent der Zeit benötigen sollte sich die Optimierung auf diese Funktionen konzentrierem.
+
+
+Ausgabe von perf stat ./partdiff-seq vor Optimierung:
+
+  Performance counter stats for './partdiff-seq 1 2 128 1 2 1024':
+
+      84837.804292 task-clock (msec)         #    0.996 CPUs utilized          
+            15,481 context-switches          #    0.182 K/sec                  
+                 1 cpu-migrations            #    0.000 K/sec                  
+             4,375 page-faults               #    0.052 K/sec                  
+   <not supported> cycles                  
+   <not supported> stalled-cycles-frontend 
+   <not supported> stalled-cycles-backend  
+   <not supported> instructions            
+   <not supported> branches                
+   <not supported> branch-misses           
+
+      85.167448049 seconds time elapsed
+
+
+Ohne Optimierungen:
+time ./partdiff-seq 1 2 128 1 2 1024
+real	0m55.473s
+user	0m55.380s
+
+Mit i und j in calculate vertauscht. Somit wird zuerst über die Spalten iteriert und dann die Zeile. Dadurch reduziert sich die Anzahl der Cache Misses, da der Inhalt einer Zeile in der Regel nebeneinander im Speicher liegt. Da Nachbarfelder in den Cache geladen werden, wenn auf einen Speicherbereich zugegriffen wird reduziert sich somit die Zugriffszeit:
+time ./partdiff-seq 1 2 128 1 2 1024
+real    0m48.377s
+user    0m47.999s
+
+
+Wenn die flag -O3 gesetzt wird reduziert sich die Laufzeit erheblich:
+real    0m5.105s
+user    0m5.048s
+
+
+
+
