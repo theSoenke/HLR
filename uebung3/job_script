@@ -3,6 +3,6 @@
 #SBATCH -n 16
 #SBATCH -o timescript.out
 
-srun ./timescript.sh
+srun ./timescript
 
 echo fertig > job_script.out
