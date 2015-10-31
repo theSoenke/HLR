@@ -34,6 +34,11 @@ Ausgabe von perf stat ./partdiff-seq vor Optimierung:
 
       85.167448049 seconds time elapsed
 
+task-clock: Wie lange das Programm gelaufen ist
+context-switches: Wie oft das Programm unterbrochen wird
+cpu-migrations: Wie häufig das Programm auf eine andere CPU verschoben wurde
+page-faults: Wie häufig eine eine virtuelle Adresse sich nicht im Hauptspeicher befand, sondern erst geladen werden musste
+
 
 Ohne Optimierungen:
 time ./partdiff-seq 1 2 128 1 2 1024
@@ -49,6 +54,12 @@ user    0m47.999s
 Wenn die flag -O3 gesetzt wird reduziert sich die Laufzeit erheblich:
 real    0m5.105s
 user    0m5.048s
+
+Die Variable korrektur in calculate wird nicht benötigt und kann durch residuum ersetzt werden. Durch das Entfernen verbessert sich die Laufzeit auf:
+time ./partdiff-seq 1 2 128 1 2 1024
+real	0m4.736s
+user	0m4.683s
+
 
 
 

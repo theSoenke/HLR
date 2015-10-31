@@ -87,3 +87,15 @@ compute      up    6:00:00      1   comp nehalem5
 abu          up    6:00:00      5   idle abu[1-5]
 magny        up 1-00:00:00      1   idle magny1
 
+
+
+2
+
+1)
+Wenn man das Skript mehrfach ausführt ändert sich die Reihenfolge der Hostnamen. Die Prozesse sind somit nicht immer in derselben Reihenfolge mit ihrem Job fertig.
+
+2)
+Wenn man versucht die Datei timeschript.out aus timescript zu erstellen kann es passieren, dass mehrere Prozesse gleichzeit versuchen diese Datei zu schreiben und es Konflikte gibt.
+
+
+

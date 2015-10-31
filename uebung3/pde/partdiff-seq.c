@@ -203,7 +203,6 @@ calculate (struct calculation_arguments* arguments, struct calculation_results *
 	int i, j;                                   /* local variables for loops  */
 	int m1, m2;                                 /* used as indices for old and new matrices       */
 	double star;                                /* four times center value minus 4 neigh.b values */
-	double korrektur;
 	double residuum;                            /* residuum of current iteration                  */
 	double maxresiduum;                         /* maximum residuum value of a slave in iteration */
 
@@ -233,11 +232,10 @@ calculate (struct calculation_arguments* arguments, struct calculation_results *
 				star = -Matrix[m2][i-1][j] - Matrix[m2][i][j-1] - Matrix[m2][i][j+1] - Matrix[m2][i+1][j] + 4.0 * Matrix[m2][i][j];
 
 				residuum = getResiduum(arguments, options, i, j, star);
-				korrektur = residuum;
 				residuum = (residuum < 0) ? -residuum : residuum;
 				maxresiduum = (residuum < maxresiduum) ? maxresiduum : residuum;
 
-				Matrix[m1][i][j] = Matrix[m2][i][j] + korrektur;
+				Matrix[m1][i][j] = Matrix[m2][i][j] + residuum;
 			}
 		}
 
