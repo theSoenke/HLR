@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# fuehrt ./partdiff-openmp mit 5-11 Threads aus.
+# fuehrt ./partdiff-openmp mit 1-1024 Interlines aus (Nur 2er Potenzen).
 
 OUTPUT=""
 
-for THREADS in 5 6 7 8 9 10 11
+for INTERLINES in 1 2 4 8 16 32 64 128 256 512 1024
 do
-    OUTPUT="${OUTPUT}Threads = $THREADS"
+    OUTPUT="${OUTPUT}Interlines = $INTERLINES"
     OUTPUT="${OUTPUT}"$'\n\n'
     for i in 1
     do
-        BEFEHL="../partdiff-openmp $THREADS 2 512 2 2 10"
+        BEFEHL="../partdiff-openmp 12 2 $INTERLINES 2 2 1024"
         OUTPUT="${OUTPUT}⟫ $BEFEHL"
         OUTPUT="${OUTPUT}"$'\n'
         OUTPUT="${OUTPUT} $($BEFEHL)"
