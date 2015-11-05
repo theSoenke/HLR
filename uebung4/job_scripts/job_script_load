@@ -1,0 +1,8 @@
+#!/bin/bash
+#SBATCH -N 3 --ntasks-per-node=1
+#SBATCH -o job_script.out
+
+# laedt die job_script_1 auf 3 Knoten.
+
+srun ./job_script_1
+
