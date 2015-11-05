@@ -34,7 +34,7 @@ struct calculation_arguments
 	uint64_t  N;              /* number of spaces between lines (lines=N+1)     */
 	uint64_t  num_matrices;   /* number of matrices                             */
 	double    h;              /* length of a space between two lines            */
-	double    ***Matrix;      /* index matrix used for addressing M             */
+	double    ***Matrix;      /* index< matrix used for addressing M             */
 	double    *M;             /* two matrices with real values                  */
 };
 
@@ -222,8 +222,14 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 		double** Matrix_In  = arguments->Matrix[m2];
 
 		maxresiduum = 0;
-
+		
+        #pragma omp parallel private(j, star, residuum) \
+            reduction(max:maxresiduum) /* maxresiduum wird mit am Ende max verknüpft */\
+            num_threads(options->number) /* number of threads aus den args */
+        {        
+        
 		/* over all rows */
+		#pragma omp for
 		for (i = 1; i < N; i++)
 		{
 			double fpisin_i = 0.0;
@@ -253,6 +259,8 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 				Matrix_Out[i][j] = star;
 			}
 		}
+		
+		} /* end of parallel section */
 
 		results->stat_iteration++;
 		results->stat_precision = maxresiduum;
