@@ -253,8 +253,6 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 				{
 					residuum = Matrix_In[i][j] - star;
 					residuum = (residuum < 0) ? -residuum : residuum;
-					
-					#pragma omp critical
 					maxresiduum = (residuum < maxresiduum) ? maxresiduum : residuum;
 				}
 
