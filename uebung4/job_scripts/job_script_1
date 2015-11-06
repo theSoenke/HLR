@@ -10,7 +10,7 @@ do
     OUTPUT="${OUTPUT}"$'\n\n'
     for i in 1
     do
-        BEFEHL="../partdiff-openmp 12 2 $INTERLINES 2 2 1024"
+        BEFEHL="../partdiff-openmp 12 2 $INTERLINES 2 2 8196"
         OUTPUT="${OUTPUT}⟫ $BEFEHL"
         OUTPUT="${OUTPUT}"$'\n'
         OUTPUT="${OUTPUT} $($BEFEHL)"
