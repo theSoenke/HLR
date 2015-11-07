@@ -27,7 +27,7 @@
 #include <malloc.h>
 #include <sys/time.h>
 
-#include "partdiff-seq.h"
+#include "partdiff-openmp.h"
 
 struct calculation_arguments
 {
@@ -184,7 +184,7 @@ static
 void
 calculate (struct calculation_arguments const* arguments, struct calculation_results *results, struct options const* options)
 {
-	int i, j;                                   /* local variables for loops  */
+	int i, j, k;                                   /* local variables for loops  */
 	int m1, m2;                                 /* used as indices for old and new matrices       */
 	double star;                                /* four times center value minus 4 neigh.b values */
 	double residuum;                            /* residuum of current iteration                  */
@@ -223,41 +223,40 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 
 		maxresiduum = 0;
 		
-        #pragma omp parallel private(j, star, residuum) \
+        #pragma omp parallel private(i, j, star, residuum) \
             reduction(max:maxresiduum) /* maxresiduum wird mit am Ende max verknüpft */\
             num_threads(options->number) /* number of threads aus den args */
         {        
         
-		/* over all rows */
-		#pragma omp for schedule(static, 1) /* Immer genau eine Zeile */
-		for (i = 1; i < N; i++)
+		/* over all elements */
+		#pragma omp for schedule(static, 1) /* Immer genau ein Element */
+		for (k = 0; k < (N-1)*(N-1); k++)
 		{
 			double fpisin_i = 0.0;
+			
+			i = (k / (N-1)) + 1; /* Berechnung der Zeile aus k */
+			j = (k % (N-1)) + 1; /* Berechnung der Spalte aus k */
 
 			if (options->inf_func == FUNC_FPISIN)
 			{
 				fpisin_i = fpisin * sin(pih * (double)i);
 			}
 
-			/* over all columns */
-			for (j = 1; j < N; j++)
+			star = 0.25 * (Matrix_In[i-1][j] + Matrix_In[i][j-1] + Matrix_In[i][j+1] + Matrix_In[i+1][j]);
+
+			if (options->inf_func == FUNC_FPISIN)
 			{
-				star = 0.25 * (Matrix_In[i-1][j] + Matrix_In[i][j-1] + Matrix_In[i][j+1] + Matrix_In[i+1][j]);
-
-				if (options->inf_func == FUNC_FPISIN)
-				{
-					star += fpisin_i * sin(pih * (double)j);
-				}
-
-				if (options->termination == TERM_PREC || term_iteration == 1)
-				{
-					residuum = Matrix_In[i][j] - star;
-					residuum = (residuum < 0) ? -residuum : residuum;
-					maxresiduum = (residuum < maxresiduum) ? maxresiduum : residuum;
-				}
-
-				Matrix_Out[i][j] = star;
+				star += fpisin_i * sin(pih * (double)j);
 			}
+
+			if (options->termination == TERM_PREC || term_iteration == 1)
+			{
+				residuum = Matrix_In[i][j] - star;
+				residuum = (residuum < 0) ? -residuum : residuum;
+				maxresiduum = (residuum < maxresiduum) ? maxresiduum : residuum;
+			}
+
+			Matrix_Out[i][j] = star;
 		}
 		
 		} /* end of parallel section */
