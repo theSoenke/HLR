@@ -1,0 +1,182 @@
+Zeilenweise Aufteilung:
+
+
+./partdiff-openmp-zeile 3 2 256 2 2 1024
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    67.857087 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
+
+
+./partdiff-openmp-zeile 3 2 256 2 2 1024
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    65.649855 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
+
+
+
+./partdiff-openmp-zeile 3 2 256 2 2 1024
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    54.352059 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
+
+
+
+#############################################################################
+
+Spaltenweise Aufteilung:
+
+./partdiff-openmp-spalte 3 2 256 2 2 1024                               
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    163.385997 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
+
+
+./partdiff-openmp-spalte 3 2 256 2 2 1024
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    153.451251 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
+
+
+./partdiff-openmp-spalte 3 2 256 2 2 1024
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    166.841657 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
+
+
+#############################################################################
+
+Elementweise Aufteilung:
+
+./partdiff-openmp-element 3 2 256 2 2 1024
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    131.021030 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
+
+
+./partdiff-openmp-element 3 2 256 2 2 1024
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    102.954938 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
+
+
+./partdiff-openmp-element 3 2 256 2 2 1024
+============================================================
+Program for calculation of partial differential equations.  
+============================================================
+(c) Dr. Thomas Ludwig, TU München.
+    Thomas A. Zochler, TU München.
+    Andreas C. Schmidt, TU München.
+============================================================
+
+Berechnungszeit:    111.529929 s 
+Speicherbedarf:     64.563736 MiB
+Berechnungsmethode: Jacobi
+Interlines:         256
+Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
+Terminierung:       Anzahl der Iterationen
+Anzahl Iterationen: 1024
+Norm des Fehlers:   1.166017e-06
