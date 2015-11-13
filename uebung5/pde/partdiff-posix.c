@@ -26,8 +26,11 @@
 #include <math.h>
 #include <malloc.h>
 #include <sys/time.h>
+#include <pthread.h>
 
 #include "partdiff-posix.h"
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 struct calculation_arguments
 {
@@ -177,6 +180,89 @@ initMatrices (struct calculation_arguments* arguments, struct options const* opt
 	}
 }
 
+struct thread_arguments
+{
+	int start, end;
+	int m1, m2; /* used as indices for old and new matrices       */
+
+	double *maxresiduum;
+
+	struct calculation_arguments const* arguments;
+	struct calculation_results *results;
+ 	struct options const* options;
+};
+
+void* thread_calc(void* args)
+{
+	struct thread_arguments *thread_args = (struct thread_arguments*)args;
+	struct calculation_arguments const* arguments = (*thread_args).arguments;
+	struct options const* options = (*thread_args).options;
+
+	double star;                                /* four times center value minus 4 neigh.b values */
+	double residuum;                            /* residuum of current iteration                  */
+
+	int start = (*thread_args).start;
+	int end = (*thread_args).end;
+
+	int m1 = (*thread_args).m1;
+	int m2 = (*thread_args).m2;
+
+	double *maxresiduum = (*thread_args).maxresiduum;                         /* maximum residuum value of a slave in iteration */
+
+	int const N = arguments->N;
+	double const h = arguments->h;
+
+	double** Matrix_Out = arguments->Matrix[m1];
+	double** Matrix_In  = arguments->Matrix[m2];
+
+	int term_iteration = options->term_iteration;
+
+	double pih = 0.0;
+	double fpisin = 0.0;
+
+	int i, j;
+
+	if (options->inf_func == FUNC_FPISIN)
+	{
+		pih = PI * h;
+		fpisin = 0.25 * TWO_PI_SQUARE * h * h;
+	}
+
+	/* over all rows */
+	for (i = start; i < end; i++)
+	{
+		double fpisin_i = 0.0;
+
+		if (options->inf_func == FUNC_FPISIN)
+		{
+			fpisin_i = fpisin * sin(pih * (double)i);
+		}
+
+		/* over all columns */
+		for (j = 1; j < N; j++)
+		{
+			star = 0.25 * (Matrix_In[i-1][j] + Matrix_In[i][j-1] + Matrix_In[i][j+1] + Matrix_In[i+1][j]);
+
+			if (options->inf_func == FUNC_FPISIN)
+			{
+				star += fpisin_i * sin(pih * (double)j);
+			}
+
+			if (options->termination == TERM_PREC || term_iteration == 1)
+			{
+				pthread_mutex_lock(&mutex);
+				residuum = Matrix_In[i][j] - star;
+				residuum = (residuum < 0) ? -residuum : residuum;
+				*maxresiduum = (residuum < *maxresiduum) ? *maxresiduum : residuum;
+ 				pthread_mutex_unlock( &mutex );
+			}
+			Matrix_Out[i][j] = star;	
+		}
+	}
+
+	pthread_exit(NULL);
+}
+
 /* ************************************************************************ */
 /* calculate: solves the equation                                           */
 /* ************************************************************************ */
@@ -184,17 +270,14 @@ static
 void
 calculate (struct calculation_arguments const* arguments, struct calculation_results *results, struct options const* options)
 {
-	int i, j;                                   /* local variables for loops  */
-	int m1, m2;                                 /* used as indices for old and new matrices       */
-	double star;                                /* four times center value minus 4 neigh.b values */
-	double residuum;                            /* residuum of current iteration                  */
+	int tmp;                                  
+	int m1, m2;                                 
+
 	double maxresiduum;                         /* maximum residuum value of a slave in iteration */
 
 	int const N = arguments->N;
-	double const h = arguments->h;
 
-	double pih = 0.0;
-	double fpisin = 0.0;
+	pthread_t threads[options->number]; // array for all threads
 
 	int term_iteration = options->term_iteration;
 
@@ -210,57 +293,46 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 		m2 = 0;
 	}
 
-	if (options->inf_func == FUNC_FPISIN)
-	{
-		pih = PI * h;
-		fpisin = 0.25 * TWO_PI_SQUARE * h * h;
-	}
+	int num_threads = options->number;
+	int rows_per_thread = N / num_threads;	
 
 	while (term_iteration > 0)
 	{
-		double** Matrix_Out = arguments->Matrix[m1];
-		double** Matrix_In  = arguments->Matrix[m2];
-
 		maxresiduum = 0;
 
-		/* over all rows */
-		for (i = 1; i < N; i++)
+		for(int t = 0; t < num_threads; t++)
 		{
-			double fpisin_i = 0.0;
+			struct thread_arguments thread_args;
+			thread_args.arguments = arguments;
+			thread_args.results = results;
+			thread_args.options = options;
+		        thread_args.start = rows_per_thread * t;
+			thread_args.end = (rows_per_thread * t) + rows_per_thread;
+			thread_args.maxresiduum = &maxresiduum;
+			thread_args.m1 = m1;
+			thread_args.m2 = m2;
 
-			if (options->inf_func == FUNC_FPISIN)
+ 			int result = pthread_create(&threads[t], NULL, thread_calc, &thread_args);
+			
+			if(result)
 			{
-				fpisin_i = fpisin * sin(pih * (double)i);
-			}
-
-			/* over all columns */
-			for (j = 1; j < N; j++)
-			{
-				star = 0.25 * (Matrix_In[i-1][j] + Matrix_In[i][j-1] + Matrix_In[i][j+1] + Matrix_In[i+1][j]);
-
-				if (options->inf_func == FUNC_FPISIN)
-				{
-					star += fpisin_i * sin(pih * (double)j);
-				}
-
-				if (options->termination == TERM_PREC || term_iteration == 1)
-				{
-					residuum = Matrix_In[i][j] - star;
-					residuum = (residuum < 0) ? -residuum : residuum;
-					maxresiduum = (residuum < maxresiduum) ? maxresiduum : residuum;
-				}
-
-				Matrix_Out[i][j] = star;
+				printf("Thread %d could not be created\n", t);
 			}
 		}
+
+		for (int t = 0; t < num_threads; t++)
+		{
+	            pthread_join(threads[t], NULL);
+        	}
+		
 
 		results->stat_iteration++;
 		results->stat_precision = maxresiduum;
 
 		/* exchange m1 and m2 */
-		i = m1;
+		tmp = m1;
 		m1 = m2;
-		m2 = i;
+		m2 = tmp;
 
 		/* check for stopping calculation, depending on termination method */
 		if (options->termination == TERM_PREC)
