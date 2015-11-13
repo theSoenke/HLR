@@ -294,7 +294,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 	}
 
 	int num_threads = options->number;
-	int rows_per_thread = N / num_threads;	
+	double data_size = N / num_threads;
 
 	while (term_iteration > 0)
 	{
@@ -302,12 +302,17 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 
 		for(int t = 0; t < num_threads; t++)
 		{
+			int start, end; 
+			
+			start = data_size * t + 1;
+			end = data_size* (t + 1);			
+
 			struct thread_arguments thread_args;
 			thread_args.arguments = arguments;
 			thread_args.results = results;
 			thread_args.options = options;
-		        thread_args.start = rows_per_thread * t;
-			thread_args.end = (rows_per_thread * t) + rows_per_thread;
+		        thread_args.start = start;
+			thread_args.end = end;
 			thread_args.maxresiduum = &maxresiduum;
 			thread_args.m1 = m1;
 			thread_args.m2 = m2;
