@@ -1,6 +1,6 @@
 Threads = 1
 
-⟫ ./partdiff-posix 1 2 512 2 2 256
+⟫ ../partdiff-posix 1 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -9,18 +9,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    165.159189 s 
+Berechnungszeit:    353.061038 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 1 2 512 2 2 256
+⟫ ../partdiff-posix 1 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -29,18 +29,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    164.574210 s 
+Berechnungszeit:    356.573391 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 1 2 512 2 2 256
+⟫ ../partdiff-posix 1 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -49,20 +49,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    164.544267 s 
+Berechnungszeit:    353.413679 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 2
 
-⟫ ./partdiff-posix 2 2 512 2 2 256
+⟫ ../partdiff-posix 2 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -71,18 +71,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    84.897485 s 
+Berechnungszeit:    179.076463 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 2 2 512 2 2 256
+⟫ ../partdiff-posix 2 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -91,18 +91,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    83.978456 s 
+Berechnungszeit:    178.982200 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 2 2 512 2 2 256
+⟫ ../partdiff-posix 2 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -111,20 +111,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    83.825685 s 
+Berechnungszeit:    178.662208 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 3
 
-⟫ ./partdiff-posix 3 2 512 2 2 256
+⟫ ../partdiff-posix 3 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -133,18 +133,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    59.039918 s 
+Berechnungszeit:    127.380308 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 3 2 512 2 2 256
+⟫ ../partdiff-posix 3 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -153,18 +153,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    62.198278 s 
+Berechnungszeit:    123.620029 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 3 2 512 2 2 256
+⟫ ../partdiff-posix 3 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -173,20 +173,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    58.967895 s 
+Berechnungszeit:    124.574099 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 4
 
-⟫ ./partdiff-posix 4 2 512 2 2 256
+⟫ ../partdiff-posix 4 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -195,18 +195,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    47.647949 s 
+Berechnungszeit:    100.828268 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 4 2 512 2 2 256
+⟫ ../partdiff-posix 4 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -215,18 +215,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    50.162354 s 
+Berechnungszeit:    101.966156 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 4 2 512 2 2 256
+⟫ ../partdiff-posix 4 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -235,20 +235,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    49.221242 s 
+Berechnungszeit:    100.126434 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 5
 
-⟫ ./partdiff-posix 5 2 512 2 2 256
+⟫ ../partdiff-posix 5 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -257,18 +257,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    41.971993 s 
+Berechnungszeit:    84.669239 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 5 2 512 2 2 256
+⟫ ../partdiff-posix 5 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -277,18 +277,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    41.375886 s 
+Berechnungszeit:    85.060844 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 5 2 512 2 2 256
+⟫ ../partdiff-posix 5 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -297,20 +297,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    42.332922 s 
+Berechnungszeit:    84.506739 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 6
 
-⟫ ./partdiff-posix 6 2 512 2 2 256
+⟫ ../partdiff-posix 6 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -319,18 +319,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    37.328747 s 
+Berechnungszeit:    74.444540 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 6 2 512 2 2 256
+⟫ ../partdiff-posix 6 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -339,18 +339,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    36.536566 s 
+Berechnungszeit:    74.373944 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 6 2 512 2 2 256
+⟫ ../partdiff-posix 6 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -359,20 +359,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    37.034227 s 
+Berechnungszeit:    75.236249 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 7
 
-⟫ ./partdiff-posix 7 2 512 2 2 256
+⟫ ../partdiff-posix 7 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -381,18 +381,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    33.620470 s 
+Berechnungszeit:    66.594791 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 7 2 512 2 2 256
+⟫ ../partdiff-posix 7 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -401,18 +401,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    33.564215 s 
+Berechnungszeit:    67.350011 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 7 2 512 2 2 256
+⟫ ../partdiff-posix 7 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -421,20 +421,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    33.766485 s 
+Berechnungszeit:    66.456867 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 8
 
-⟫ ./partdiff-posix 8 2 512 2 2 256
+⟫ ../partdiff-posix 8 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -443,18 +443,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    31.526262 s 
+Berechnungszeit:    61.775455 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 8 2 512 2 2 256
+⟫ ../partdiff-posix 8 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -463,18 +463,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    31.334393 s 
+Berechnungszeit:    62.207595 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 8 2 512 2 2 256
+⟫ ../partdiff-posix 8 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -483,20 +483,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    31.330387 s 
+Berechnungszeit:    61.980632 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 9
 
-⟫ ./partdiff-posix 9 2 512 2 2 256
+⟫ ../partdiff-posix 9 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -505,18 +505,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    29.432817 s 
+Berechnungszeit:    58.226182 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 9 2 512 2 2 256
+⟫ ../partdiff-posix 9 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -525,18 +525,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    29.597501 s 
+Berechnungszeit:    58.386392 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 9 2 512 2 2 256
+⟫ ../partdiff-posix 9 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -545,20 +545,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    29.723453 s 
+Berechnungszeit:    57.948615 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 10
 
-⟫ ./partdiff-posix 10 2 512 2 2 256
+⟫ ../partdiff-posix 10 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -567,18 +567,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    27.969495 s 
+Berechnungszeit:    54.942354 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927917e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925835e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 10 2 512 2 2 256
+⟫ ../partdiff-posix 10 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -587,18 +587,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    27.999198 s 
+Berechnungszeit:    54.747455 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927917e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925835e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 10 2 512 2 2 256
+⟫ ../partdiff-posix 10 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -607,20 +607,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    27.118358 s 
+Berechnungszeit:    54.571079 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927917e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925835e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 11
 
-⟫ ./partdiff-posix 11 2 512 2 2 256
+⟫ ../partdiff-posix 11 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -629,18 +629,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    26.631955 s 
+Berechnungszeit:    52.447097 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 11 2 512 2 2 256
+⟫ ../partdiff-posix 11 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -649,18 +649,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    26.498083 s 
+Berechnungszeit:    51.806502 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 11 2 512 2 2 256
+⟫ ../partdiff-posix 11 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -669,20 +669,20 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    26.440840 s 
+Berechnungszeit:    52.604591 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.929696e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.929444e-07
 
 --------------------------------------------------------------------------------
 
 Threads = 12
 
-⟫ ./partdiff-posix 12 2 512 2 2 256
+⟫ ../partdiff-posix 12 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -691,18 +691,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    25.666459 s 
+Berechnungszeit:    50.239497 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 12 2 512 2 2 256
+⟫ ../partdiff-posix 12 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -711,18 +711,18 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    25.674887 s 
+Berechnungszeit:    50.024657 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
-⟫ ./partdiff-posix 12 2 512 2 2 256
+⟫ ../partdiff-posix 12 2 512 2 2 550
  ============================================================
 Program for calculation of partial differential equations.  
 ============================================================
@@ -731,14 +731,14 @@ Program for calculation of partial differential equations.
     Andreas C. Schmidt, TU München.
 ============================================================
 
-Berechnungszeit:    25.798385 s 
+Berechnungszeit:    50.244326 s 
 Speicherbedarf:     257.126236 MiB
 Berechnungsmethode: Jacobi
 Interlines:         512
 Stoerfunktion:      f(x,y) = 2pi^2*sin(pi*x)sin(pi*y)
 Terminierung:       Anzahl der Iterationen
-Anzahl Iterationen: 256
-Norm des Fehlers:   2.927766e-07
+Anzahl Iterationen: 550
+Norm des Fehlers:   2.925622e-07
 
 --------------------------------------------------------------------------------
 
