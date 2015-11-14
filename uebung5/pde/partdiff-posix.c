@@ -183,12 +183,12 @@ initMatrices (struct calculation_arguments* arguments, struct options const* opt
 struct thread_arguments
 {
 	int start, end;
-	int m1, m2; /* used as indices for old and new matrices       */
+	int m1, m2; 
 
 	double *maxresiduum;
+	int term_iteration;
 
 	struct calculation_arguments const* arguments;
-	struct calculation_results *results;
  	struct options const* options;
 };
 
@@ -215,7 +215,7 @@ void* thread_calc(void* args)
 	double** Matrix_Out = arguments->Matrix[m1];
 	double** Matrix_In  = arguments->Matrix[m2];
 
-	int term_iteration = options->term_iteration;
+	int term_iteration = (*thread_args).term_iteration;
 
 	double pih = 0.0;
 	double fpisin = 0.0;
@@ -250,12 +250,14 @@ void* thread_calc(void* args)
 
 			if (options->termination == TERM_PREC || term_iteration == 1)
 			{
-				pthread_mutex_lock(&mutex);
 				residuum = Matrix_In[i][j] - star;
 				residuum = (residuum < 0) ? -residuum : residuum;
+
+				pthread_mutex_lock(&mutex);
 				*maxresiduum = (residuum < *maxresiduum) ? *maxresiduum : residuum;
- 				pthread_mutex_unlock( &mutex );
+ 				pthread_mutex_unlock(&mutex);
 			}
+
 			Matrix_Out[i][j] = star;	
 		}
 	}
@@ -270,16 +272,17 @@ static
 void
 calculate (struct calculation_arguments const* arguments, struct calculation_results *results, struct options const* options)
 {
-	int tmp;                                  
-	int m1, m2;                                 
-
-	double maxresiduum;                         /* maximum residuum value of a slave in iteration */
+	int m1, m2;   				/* used as indices for old and new matrices       */ 
+	double maxresiduum;                     /* maximum residuum value of a slave in iteration */
 
 	int const N = arguments->N;
-
-	pthread_t threads[options->number]; // array for all threads
-
 	int term_iteration = options->term_iteration;
+
+	int num_threads = options->number;
+	double data_size = N / num_threads;
+	pthread_t threads[num_threads]; 
+	struct thread_arguments thread_args[num_threads];
+
 
 	/* initialize m1 and m2 depending on algorithm */
 	if (options->method == METH_JACOBI)
@@ -293,31 +296,28 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 		m2 = 0;
 	}
 
-	int num_threads = options->number;
-	double data_size = N / num_threads;
+	int start, end;
+	int t;
 
 	while (term_iteration > 0)
 	{
 		maxresiduum = 0;
 
-		for(int t = 0; t < num_threads; t++)
-		{
-			int start, end; 
-			
+		for(t = 0; t < num_threads; t++)
+		{	
 			start = data_size * t + 1;
-			end = data_size* (t + 1);			
+			end = data_size * (t + 1);			
 
-			struct thread_arguments thread_args;
-			thread_args.arguments = arguments;
-			thread_args.results = results;
-			thread_args.options = options;
-		        thread_args.start = start;
-			thread_args.end = end;
-			thread_args.maxresiduum = &maxresiduum;
-			thread_args.m1 = m1;
-			thread_args.m2 = m2;
+			thread_args[t].arguments = arguments;
+			thread_args[t].options = options;
+			thread_args[t].term_iteration = term_iteration;
+		        thread_args[t].start = start;
+			thread_args[t].end = end;
+			thread_args[t].maxresiduum = &maxresiduum;
+			thread_args[t].m1 = m1;
+			thread_args[t].m2 = m2;
 
- 			int result = pthread_create(&threads[t], NULL, thread_calc, &thread_args);
+ 			int result = pthread_create(&threads[t], NULL, thread_calc, &thread_args[t]);
 			
 			if(result)
 			{
@@ -325,7 +325,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 			}
 		}
 
-		for (int t = 0; t < num_threads; t++)
+		for (t = 0; t < num_threads; t++)
 		{
 	            pthread_join(threads[t], NULL);
         	}
@@ -335,9 +335,9 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 		results->stat_precision = maxresiduum;
 
 		/* exchange m1 and m2 */
-		tmp = m1;
+		t = m1;
 		m1 = m2;
-		m2 = tmp;
+		m2 = t;
 
 		/* check for stopping calculation, depending on termination method */
 		if (options->termination == TERM_PREC)
