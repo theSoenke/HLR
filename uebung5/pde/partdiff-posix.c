@@ -180,6 +180,9 @@ initMatrices (struct calculation_arguments* arguments, struct options const* opt
 	}
 }
 
+/* ************************************************************************ */
+/* Notwendige Variable für jeden Thread                                     */
+/* ************************************************************************ */
 struct thread_arguments
 {
 	int start, end;
@@ -192,6 +195,9 @@ struct thread_arguments
  	struct options const* options;
 };
 
+/* ************************************************************************ */
+/* Funktion, die den threads übergeben wird                                 */
+/* ************************************************************************ */
 void* thread_calc(void* args)
 {
 	struct thread_arguments *thread_args = (struct thread_arguments*)args;
@@ -252,7 +258,8 @@ void* thread_calc(void* args)
 			{
 				residuum = Matrix_In[i][j] - star;
 				residuum = (residuum < 0) ? -residuum : residuum;
-
+				
+				// Nur ein thread darf zur Zeit auf maxresiduum zugreifen
 				pthread_mutex_lock(&mutex);
 				*maxresiduum = (residuum < *maxresiduum) ? *maxresiduum : residuum;
  				pthread_mutex_unlock(&mutex);
@@ -279,9 +286,9 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 	int term_iteration = options->term_iteration;
 
 	int num_threads = options->number;
-	double data_size = N / num_threads;
-	pthread_t threads[num_threads]; 
-	struct thread_arguments thread_args[num_threads];
+	double data_size = N / num_threads; /* Datenbreite, die jeder Thread bearbeiten soll   */
+	pthread_t threads[num_threads]; /* Array mit threads    */
+	struct thread_arguments thread_args[num_threads]; /* Argumente für die Threads   */
 
 
 	/* initialize m1 and m2 depending on algorithm */
@@ -317,6 +324,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 			thread_args[t].m1 = m1;
 			thread_args[t].m2 = m2;
 
+			// Thread wird erstellt und die notwendigen Argumente mit übergeben
  			int result = pthread_create(&threads[t], NULL, thread_calc, &thread_args[t]);
 			
 			if(result)

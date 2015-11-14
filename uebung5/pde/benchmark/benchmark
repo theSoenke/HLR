@@ -10,7 +10,7 @@ do
     OUTPUT="${OUTPUT}"$'\n\n'
     for i in 1 2 3
     do
-        BEFEHL="./partdiff-posix $THREADS 2 512 2 2 256"
+        BEFEHL="../partdiff-posix $THREADS 2 512 2 2 550"
         OUTPUT="${OUTPUT}⟫ $BEFEHL"
         OUTPUT="${OUTPUT}"$'\n'
         OUTPUT="${OUTPUT} $($BEFEHL)"
