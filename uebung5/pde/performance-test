@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# fuehrt ./partdiff-posix mit 1-12 Threads je 3-mal aus.
+
+OUTPUT=""
+
+for THREADS in 1 2 3 4 5 6 7 8 9 10 11 12
+do
+    OUTPUT="${OUTPUT}Threads = $THREADS"
+    OUTPUT="${OUTPUT}"$'\n\n'
+    for i in 1 2 3
+    do
+        BEFEHL="./partdiff-posix $THREADS 2 512 2 2 256"
+        OUTPUT="${OUTPUT}⟫ $BEFEHL"
+        OUTPUT="${OUTPUT}"$'\n'
+        OUTPUT="${OUTPUT} $($BEFEHL)"
+        OUTPUT=${OUTPUT%Matrix:*}
+        
+OUTPUT="${OUTPUT}--------------------------------------------------------------------------------"
+        OUTPUT="${OUTPUT}"$'\n\n'
+    done
+done
+
+OUTPUT="${OUTPUT}################################################################################"
+OUTPUT="${OUTPUT}"$'\n\n'
+
+echo "${OUTPUT}" 
