@@ -41,14 +41,18 @@ int main(int argc, char** argv)
     // Gather hostname and time into buffer
 	MPI_Gather(&output, length, MPI_CHAR, 
 	            buffer, length, MPI_CHAR, 0, MPI_COMM_WORLD);
-	          
-  	       
+	            
+    int min_micro;
+    MPI_Reduce(&tv.tv_usec, &min_micro, 1, MPI_INT, MPI_MIN,
+	       0, MPI_COMM_WORLD);
+	       
 	if(rank == 0 && num_processes >= 1)
 	{
 		for(int i = 0; i < num_processes; i++)
 		{
 			printf("%s\n", buffer + (length * i));
 		}
+		printf("%d\n", min_micro);
 	}
 
 	MPI_Barrier(MPI_COMM_WORLD);
