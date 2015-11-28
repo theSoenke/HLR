@@ -1,68 +1,155 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <mpi.h>
+#include <string.h>
 
-int*
-init (int N)
+
+// number of elements for a process
+int proc_length(int N, int rank, int num_procs)
 {
-  //todo
-  int* buf = malloc(sizeof(int) * N);
+	int base = N / num_procs;
+	int rest = N % num_procs;
 
-  srand(time(NULL));
-
-  for (int i = 0; i < N; i++)
-  {
-    buf[i] = rand() % 25; //do not modify %25
-  }
-
-  return buf;
+	if(rank < rest)
+	{
+		base++;
+	}
+	
+	return base;
 }
 
 int*
-circle (int* buf)
+init (int N, int num_procs)
 {
-  //todo
-  return buf;
+	int length = (N / num_procs) + 1;
+  	int* buf = malloc(sizeof(int) * length);
+
+  	srand(time(NULL));
+
+	for (int i = 0; i < length; i++)
+	{
+		buf[i] = rand() % 25; //do not modify %25
+	}
+
+	return buf;
+}
+
+void circle (int *buf, int rank, int N, int num_procs)
+{
+	int up_rank, down_rank;
+
+	int length = proc_length(N, rank, num_procs);
+	int buf_size = (N / num_procs) + 1;
+	int *tmp_buf = malloc(sizeof(int) * buf_size);
+ 	memcpy(tmp_buf, buf, length * sizeof(int));
+
+	for(int i = 0; i < num_procs; i++)
+	{	
+		up_rank = ((rank + 1) % num_procs);
+		down_rank = ((rank - 1) % num_procs);
+		
+		MPI_Send(&tmp_buf, buf_size, MPI_INT, up_rank, 0, MPI_COMM_WORLD);
+
+		length = proc_length(N, down_rank, num_procs);	
+		MPI_Recv(&tmp_buf, buf_size, MPI_INT, down_rank, 0, MPI_COMM_WORLD, NULL);
+	}
+  
+ 	memcpy(buf, tmp_buf, length * sizeof(int));
+}
+
+void print_array(int *buf, int rank, int length)
+{
+
+	printf("rank %d: ", rank);
+	for (int i = 0; i < length; i++)
+	{
+		printf (" %d ", buf[i]);
+	}
+	printf("\n");
+}
+
+void print_ordered(int *buf, int rank, int N, int num_procs)
+{
+	int length = proc_length(N, rank, num_procs);
+	int mesg = 0;
+	
+	if(rank == 0)
+	{
+		print_array(buf, rank, length);
+
+		if(rank < (num_procs - 1))
+		{
+			mesg = 1;
+			MPI_Send(&mesg, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);		
+		}
+	}
+	else
+	{
+		MPI_Recv(&mesg, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, NULL);
+		print_array(buf, rank, length);
+		
+		if(rank < (num_procs - 1))
+		{
+			int mesg = 1;
+			MPI_Send(&mesg, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);
+		}
+	}	
 }
 
 int
 main (int argc, char** argv)
 {
-  char arg[256];
-  int N;
-  int rank;
-  int* buf;
+	int rank, num_procs;
+  
+	MPI_Init(&argc, &argv);
 
-  if (argc < 2)
-  {
-    printf("Arguments error\n");
-    return EXIT_FAILURE;
-  }
+	MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-  sscanf(argv[1], "%s", arg);
 
-  //array length
-  N = atoi(arg);
-  buf = init(N);
+	char arg[256];
 
-  //todo myrank
-  rank = 0;
+	if (argc < 2)
+	{
+		printf("Arguments error\n");
+		MPI_Finalize();
+		return EXIT_FAILURE;
+	}
 
-  printf("\nBEFORE\n");
+	sscanf(argv[1], "%s", arg);
 
-  for (int i = 0; i < N; i++)
-  {
-    printf ("rank %d: %d\n", rank, buf[i]);
-  }
+	//array length
+	int N = atoi(arg);
+	int *buf = init(N, num_procs);
+	
+	MPI_Barrier(MPI_COMM_WORLD);
+	
 
-  circle(buf);
+	if(rank == 0)
+	{
+		printf("\nBEFORE\n");
+	}
+	print_ordered(buf, rank, N, num_procs);
+	
+	MPI_Barrier(MPI_COMM_WORLD);
 
-  printf("\nAFTER\n");
+	
+	circle(buf, rank, N, num_procs);
 
-  for (int j = 0; j < N; j++)
-  {
-    printf ("rank %d: %d\n", rank, buf[j]);
-  }
+	
+	MPI_Barrier(MPI_COMM_WORLD);
+	
+	if(rank == 0)
+	{
+		printf("\nAFTER\n");
+	}
+	print_ordered(buf, rank, N, num_procs);	
+	
+	MPI_Barrier(MPI_COMM_WORLD);
 
-  return EXIT_SUCCESS;
+
+	
+	MPI_Finalize();
+	return EXIT_SUCCESS;
 }
