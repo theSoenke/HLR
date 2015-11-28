@@ -4,14 +4,16 @@
 #include <mpi.h>
 #include <string.h>
 
+static int cur_data_width = 0;
 
 // number of elements for a process
-int proc_length(int N, int rank, int num_procs)
+int proc_length(int N, int rank, int num_procs, int steps)
 {
 	int base = N / num_procs;
 	int rest = N % num_procs;
+	int tmp_rank = (rank + steps) % num_procs;
 
-	if(rank < rest)
+	if(tmp_rank < rest)
 	{
 		base++;
 	}
@@ -22,6 +24,7 @@ int proc_length(int N, int rank, int num_procs)
 int*
 init (int N, int rank, int num_procs)
 {
+	cur_data_width = proc_length(N, rank, num_procs, 0);
 	int length = (N / num_procs) + 1;
   	int* buf = malloc(sizeof(int) * length);
 
@@ -35,30 +38,55 @@ init (int N, int rank, int num_procs)
 	return buf;
 }
 
-void circle (int *buf, int rank, int N, int num_procs)
+void circle (int *buf,int rank, int N, int num_procs)
 {
 	int up_rank, down_rank;
 
 	int buf_size = (N / num_procs) + 1;
 	int tmp_buf[buf_size];
  	memcpy(tmp_buf, buf, buf_size * sizeof(int));
+	int termination;
 
-	for(int i = 0; i < num_procs-1; i++)
+	if(rank == 0)
+	{
+		MPI_Send(buf, 1, MPI_INT, num_procs-1, 1, MPI_COMM_WORLD);
+	}
+
+	if(rank == num_procs-1)
+	{
+		MPI_Recv(&termination, 1, MPI_INT, 0, 1, MPI_COMM_WORLD, NULL);
+	}
+
+	MPI_Barrier(MPI_COMM_WORLD);
+
+	int steps = 0;
+	int running = 1;
+	int i = 0;
+	while(running && i < num_procs-1)
 	{	
 		up_rank = ((rank + 1) % num_procs);
 		down_rank = ((rank - 1) % num_procs);
-		
+
 		MPI_Send(tmp_buf, buf_size, MPI_INT, up_rank, 0, MPI_COMM_WORLD);
 		MPI_Recv(tmp_buf, buf_size, MPI_INT, down_rank, 0, MPI_COMM_WORLD, NULL);
+
+		if(rank == num_procs-1 && tmp_buf[0] == termination)
+		{
+			running = 0;			
+		}
+
+        	MPI_Bcast(&running, 1, MPI_INT, num_procs-1, MPI_COMM_WORLD);
+		steps++;
 	}
   
+	cur_data_width = proc_length(N, rank, num_procs, steps);
  	memcpy(buf, tmp_buf, buf_size * sizeof(int));
 }
 
-void print_data(int *buf, int rank, int length)
+void print_data(int *buf, int rank)
 {
 	printf("rank %d: ", rank);
-	for (int i = 0; i < length; i++)
+	for (int i = 0; i < cur_data_width; i++)
 	{
 		printf (" %d ", buf[i]);
 	}
@@ -66,23 +94,20 @@ void print_data(int *buf, int rank, int length)
 }
 
 // every process prints data in order
-void print_ordered(int *buf, int N, int rank, int num_procs)
+void print_ordered(int *buf, int rank, int num_procs)
 {
-	// length nach circle aufruf nicht immer korrekt	
-	int length = proc_length(N, rank, num_procs);
-	
 	for(int i = 0; i < num_procs; i++) 
 	{
 	    MPI_Barrier(MPI_COMM_WORLD);
 	    if (i == rank) 
 	    {
-		 print_data(buf, rank, length);
+		 print_data(buf, rank);
 	    }
 	}	
 }
 
 // rank 0 gathers and prints all data
-void print_ordered2(int *buf, int N, int rank, int num_procs)
+void print_ordered2(int *buf,int N, int rank, int num_procs)
 {
 	int *buffer;
 
@@ -91,9 +116,9 @@ void print_ordered2(int *buf, int N, int rank, int num_procs)
 		buffer = malloc(sizeof(int) * N);
 	}
 
-	int size = proc_length(N, rank, num_procs);
-	MPI_Gather(buf, size, MPI_INT, 
-	            buffer, size, MPI_INT, 0, MPI_COMM_WORLD);
+	int data_width = proc_length(N, rank, num_procs, 0);
+	MPI_Gather(buf, data_width, MPI_INT, 
+	            buffer, data_width, MPI_INT, 0, MPI_COMM_WORLD);
 
 	if(rank == 0)
 	{
@@ -139,6 +164,7 @@ main (int argc, char** argv)
 	{
 		printf("\nBEFORE\n");
 	}
+	//print_ordered(buf, rank, num_procs);
 	print_ordered2(buf, N, rank, num_procs);
 	
 	MPI_Barrier(MPI_COMM_WORLD);
@@ -153,6 +179,7 @@ main (int argc, char** argv)
 	{
 		printf("\nAFTER\n");
 	}
+	//print_ordered(buf, rank, num_procs);
 	print_ordered2(buf, N, rank, num_procs);
 	
 	
