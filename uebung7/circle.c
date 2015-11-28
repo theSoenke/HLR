@@ -20,12 +20,12 @@ int proc_length(int N, int rank, int num_procs)
 }
 
 int*
-init (int N, int num_procs)
+init (int N, int rank, int num_procs)
 {
 	int length = (N / num_procs) + 1;
   	int* buf = malloc(sizeof(int) * length);
 
-  	srand(time(NULL));
+  	srand(time(NULL) + rank);
 
 	for (int i = 0; i < length; i++)
 	{
@@ -121,7 +121,7 @@ main (int argc, char** argv)
 
 	//array length
 	int N = atoi(arg);
-	int *buf = init(N, num_procs);
+	int *buf = init(N, rank, num_procs);
 	
 	MPI_Barrier(MPI_COMM_WORLD);
 	
