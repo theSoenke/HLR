@@ -55,7 +55,7 @@ void circle (int *buf, int rank, int N, int num_procs)
  	memcpy(buf, tmp_buf, buf_size * sizeof(int));
 }
 
-void print_array(int *buf, int rank, int length)
+void print_data(int *buf, int rank, int length)
 {
 	printf("rank %d: ", rank);
 	for (int i = 0; i < length; i++)
@@ -69,28 +69,14 @@ void print_ordered(int *buf, int rank, int N, int num_procs)
 {
 	// length nach circle aufruf nicht immer korrekt	
 	int length = proc_length(N, rank, num_procs);
-	int mesg = 0;
 	
-	if(rank == 0)
+	for(int i = 0; i < num_procs; i++) 
 	{
-		print_array(buf, rank, length);
-
-		if(rank < (num_procs - 1))
-		{
-			mesg = 1;
-			MPI_Send(&mesg, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);		
-		}
-	}
-	else
-	{
-		MPI_Recv(&mesg, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, NULL);
-		print_array(buf, rank, length);
-		
-		if(rank < (num_procs - 1))
-		{
-			int mesg = 1;
-			MPI_Send(&mesg, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);
-		}
+	    MPI_Barrier(MPI_COMM_WORLD);
+	    if (i == rank) 
+	    {
+		 print_data(buf, rank, length);
+	    }
 	}	
 }
 
