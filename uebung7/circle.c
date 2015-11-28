@@ -65,7 +65,8 @@ void print_data(int *buf, int rank, int length)
 	printf("\n");
 }
 
-void print_ordered(int *buf, int rank, int N, int num_procs)
+// every process prints data in order
+void print_ordered(int *buf, int N, int rank, int num_procs)
 {
 	// length nach circle aufruf nicht immer korrekt	
 	int length = proc_length(N, rank, num_procs);
@@ -78,6 +79,31 @@ void print_ordered(int *buf, int rank, int N, int num_procs)
 		 print_data(buf, rank, length);
 	    }
 	}	
+}
+
+// rank 0 gathers and prints all data
+void print_ordered2(int *buf, int N, int rank, int num_procs)
+{
+	int *buffer;
+
+	if(rank == 0)
+	{	
+		buffer = malloc(sizeof(int) * N);
+	}
+
+	int size = proc_length(N, rank, num_procs);
+	MPI_Gather(buf, size, MPI_INT, 
+	            buffer, size, MPI_INT, 0, MPI_COMM_WORLD);
+
+	if(rank == 0)
+	{
+		for(int i = 0; i < N; i++)
+		{
+			printf("%d ", *(buffer + i));
+		}
+		
+		printf("\n");
+	}
 }
 
 int
@@ -113,7 +139,7 @@ main (int argc, char** argv)
 	{
 		printf("\nBEFORE\n");
 	}
-	print_ordered(buf, rank, N, num_procs);
+	print_ordered2(buf, N, rank, num_procs);
 	
 	MPI_Barrier(MPI_COMM_WORLD);
 
@@ -127,8 +153,8 @@ main (int argc, char** argv)
 	{
 		printf("\nAFTER\n");
 	}
-	print_ordered(buf, rank, N, num_procs);
-
+	print_ordered2(buf, N, rank, num_procs);
+	
 	
 	MPI_Barrier(MPI_COMM_WORLD);
 
