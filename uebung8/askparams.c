@@ -80,13 +80,13 @@
 #include <inttypes.h>
 #include <string.h>
 
-#include "partdiff-seq.h"
+#include "jacobi-mpi.h"
 
 static
 void
 usage (char* name)
 {
-	printf("Usage: %s [num] [method] [lines] [func] [term] [prec/iter]\n", name);
+	printf("Usage: %s [num] [lines] [func] [term] [prec/iter]\n", name);
 	printf("\n");
 	printf("  - num:       number of threads (1 .. %d)\n", MAX_THREADS);
 	printf("  - lines:     number of interlines (0 .. %d)\n", MAX_INTERLINES);

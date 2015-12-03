@@ -26,7 +26,7 @@
 #include <malloc.h>
 #include <sys/time.h>
 
-#include "partdiff-seq.h"
+#include "jacobi-mpi.h"
 
 struct calculation_arguments
 {
@@ -61,7 +61,7 @@ void
 initVariables (struct calculation_arguments* arguments, struct calculation_results* results, struct options const* options)
 {
 	arguments->N = (options->interlines * 8) + 9 - 1;
-	arguments->num_matrices = 1;
+	arguments->num_matrices = 2;
 	arguments->h = 1.0 / arguments->N;
 
 	results->m = 0;
@@ -198,7 +198,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 	int term_iteration = options->term_iteration;
 
 	m1 = 0;
-	m2 = 0;
+	m2 = 1;
 
 	if (options->inf_func == FUNC_FPISIN)
 	{
