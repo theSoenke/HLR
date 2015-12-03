@@ -91,8 +91,8 @@ initVariables (struct calculation_arguments* arguments, struct calculation_resul
 	m_from = min((m_size * rank + 1), N);
 	m_to = min((m_size * (rank+1)), N-1);
 	if(m_from > m_to) {
-	    m_from = -1;
-	    m_to = -2;
+	    m_from = N;
+	    m_to = N-1;
 	}
 	m_size = m_to - m_from + 1;
 }
@@ -174,54 +174,52 @@ initMatrices (struct calculation_arguments* arguments, struct options const* opt
 	double*** Matrix = arguments->Matrix;
 	
 	uint64_t const m_height = m_size + 2;
-			    
-	if(m_size < 1) {
-	    return;
-	}
+		
+		
+    /* initialize matrix/matrices with zeros */
+    for (g = 0; g < arguments->num_matrices; g++)
+    {
+	    for (i = 0; i < m_height; i++)
+	    {
+		    for (j = 0; j < N; j++)
+		    {
+			    Matrix[g][i][j] = 0.0;
+		    }
+	    }
+    }
 
-	/* initialize matrix/matrices with zeros */
-	for (g = 0; g < arguments->num_matrices; g++)
-	{
-		for (i = 0; i < m_height; i++)
-		{
-			for (j = 0; j < N; j++)
-			{
-				Matrix[g][i][j] = 0.0;
-			}
-		}
-	}
-
-	/* initialize borders, depending on function (function 2: nothing to do) */
-	if (options->inf_func == FUNC_F0)
-	{
-		for (g = 0; g < arguments->num_matrices; g++)
-		{
-		    /* Links und Rechts */
-			for (i = 0; i < m_height; i++)
-			{
-				Matrix[g][i][0] = 1.0 - (h * (i + m_from - 1));
-				Matrix[g][i][N] = h * (i + m_from - 1);
-			}
-			/* Oberste Zeile */
-			if(m_from == 1) {
-			    for (i = 0; i < N; i++)
-			    {
-				    Matrix[g][0][i] = 1.0 - (h * i);
-			    }
-			    Matrix[g][0][N] = 0.0;
-			}
-			/* Unterste Zeile */
-			if(rank + 1 == num_procs) {
-			    for (i = 0; i < N; i++)
-			    {
-				    Matrix[g][m_size+1][i] = h * i;
-			    }
-			    Matrix[g][m_size+1][0] = 0.0;
-			}
-		}
-	}
+    /* initialize borders, depending on function (function 2: nothing to do) */
+    if (options->inf_func == FUNC_F0)
+    {
+	    for (g = 0; g < arguments->num_matrices; g++)
+	    {
+	        /* Links und Rechts */
+		    for (i = 0; i < m_height; i++)
+		    {
+			    Matrix[g][i][0] = 1.0 - (h * (i + m_from - 1));
+			    Matrix[g][i][N] = h * (i + m_from - 1);
+		    }
+		    /* Oberste Zeile */
+		    if(m_from == 1) {
+		        for (i = 0; i < N; i++)
+		        {
+			        Matrix[g][0][i] = 1.0 - (h * i);
+		        }
+		        Matrix[g][0][N] = 0.0;
+		    }
+		    /* Unterste Zeile */
+		    if((uint64_t)m_to >= N-1) {
+		        for (i = 0; i < N; i++)
+		        {
+			        Matrix[g][m_size+1][i] = h * i;
+		        }
+		        Matrix[g][m_size+1][0] = 0.0;
+		    }
+	    }
+    }
 	MPI_Barrier(MPI_COMM_WORLD);
 }
+
 
 /* ************************************************************************ */
 /* Tauscht die doppelten Zeilen unter den Prozessen aus                     */
