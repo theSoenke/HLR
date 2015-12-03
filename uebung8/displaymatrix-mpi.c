@@ -1,3 +1,7 @@
+struct calculation_arguments;
+
+struct calculation_results;
+
 /**
  * rank and size are the MPI rank and size, respectively.
  * from and to denote the global(!) range of lines that this process is responsible for.

@@ -6,9 +6,10 @@
 /** Copyright: Prof. Dr. Thomas Ludwig                                     **/
 /**            Andreas C. Schmidt                                          **/
 /**                                                                        **/
-/** File:      jacobi_mpi.c                                                **/
+/** File:      partdiff-seq.c                                              **/
 /**                                                                        **/
-/** Purpose:   Partial differential equation solver for Jacobi method.     **/
+/** Purpose:   Partial differential equation solver for Gauss-Seidel and   **/
+/**            Jacobi method.                                              **/
 /**                                                                        **/
 /****************************************************************************/
 /****************************************************************************/
@@ -25,15 +26,8 @@
 #include <math.h>
 #include <malloc.h>
 #include <sys/time.h>
-#include <mpi.h>
 
-#include "jacobi-mpi.h"
-
-int rank;
-int num_procs;
-int m_size;
-int m_from;
-int m_to;
+#include "partdiff-seq.h"
 
 struct calculation_arguments
 {
@@ -61,16 +55,6 @@ struct timeval comp_time;        /* time when calculation completed             
 
 
 /* ************************************************************************ */
-/* Hilfsfunktionen                                                          */
-/* ************************************************************************ */
-static
-int
-min(int a, int b) {
-    if(a < b) return a;
-    return b;
-}
-
-/* ************************************************************************ */
 /* initVariables: Initializes some global variables                         */
 /* ************************************************************************ */
 static
@@ -78,23 +62,12 @@ void
 initVariables (struct calculation_arguments* arguments, struct calculation_results* results, struct options const* options)
 {
 	arguments->N = (options->interlines * 8) + 9 - 1;
-	arguments->num_matrices = 2;
+	arguments->num_matrices = (options->method == METH_JACOBI) ? 2 : 1;
 	arguments->h = 1.0 / arguments->N;
 
 	results->m = 0;
 	results->stat_iteration = 0;
 	results->stat_precision = 0;
-	
-	
-	uint64_t  N = arguments->N;
-	m_size = ceil((float)(N-1) / num_procs);
-	m_from = min((m_size * rank + 1), N);
-	m_to = min((m_size * (rank+1)), N-1);
-	if(m_from > m_to) {
-	    m_from = -1;
-	    m_to = -2;
-	}
-	m_size = m_to - m_from + 1;
 }
 
 /* ************************************************************************ */
@@ -146,7 +119,7 @@ allocateMatrices (struct calculation_arguments* arguments)
 
 	uint64_t const N = arguments->N;
 
-	arguments->M = allocateMemory(arguments->num_matrices * (N + 1) * (m_size + 2) * sizeof(double));
+	arguments->M = allocateMemory(arguments->num_matrices * (N + 1) * (N + 1) * sizeof(double));
 	arguments->Matrix = allocateMemory(arguments->num_matrices * sizeof(double**));
 
 	for (i = 0; i < arguments->num_matrices; i++)
@@ -155,7 +128,7 @@ allocateMatrices (struct calculation_arguments* arguments)
 
 		for (j = 0; j <= N; j++)
 		{
-			arguments->Matrix[i][j] = arguments->M + (i * (m_size + 2) * (N + 1)) + (j * (N + 1));
+			arguments->Matrix[i][j] = arguments->M + (i * (N + 1) * (N + 1)) + (j * (N + 1));
 		}
 	}
 }
@@ -172,19 +145,13 @@ initMatrices (struct calculation_arguments* arguments, struct options const* opt
 	uint64_t const N = arguments->N;
 	double const h = arguments->h;
 	double*** Matrix = arguments->Matrix;
-	
-	uint64_t const m_height = m_size + 2;
-			    
-	if(m_size < 1) {
-	    return;
-	}
 
 	/* initialize matrix/matrices with zeros */
 	for (g = 0; g < arguments->num_matrices; g++)
 	{
-		for (i = 0; i < m_height; i++)
+		for (i = 0; i <= N; i++)
 		{
-			for (j = 0; j < N; j++)
+			for (j = 0; j <= N; j++)
 			{
 				Matrix[g][i][j] = 0.0;
 			}
@@ -196,58 +163,18 @@ initMatrices (struct calculation_arguments* arguments, struct options const* opt
 	{
 		for (g = 0; g < arguments->num_matrices; g++)
 		{
-		    /* Links und Rechts */
-			for (i = 0; i < m_height; i++)
+			for (i = 0; i <= N; i++)
 			{
-				Matrix[g][i][0] = 1.0 - (h * (i + m_from - 1));
-				Matrix[g][i][N] = h * (i + m_from - 1);
+				Matrix[g][i][0] = 1.0 - (h * i);
+				Matrix[g][i][N] = h * i;
+				Matrix[g][0][i] = 1.0 - (h * i);
+				Matrix[g][N][i] = h * i;
 			}
-			/* Oberste Zeile */
-			if(m_from == 1) {
-			    for (i = 0; i < N; i++)
-			    {
-				    Matrix[g][0][i] = 1.0 - (h * i);
-			    }
-			    Matrix[g][0][N] = 0.0;
-			}
-			/* Unterste Zeile */
-			if(rank + 1 == num_procs) {
-			    for (i = 0; i < N; i++)
-			    {
-				    Matrix[g][m_size+1][i] = h * i;
-			    }
-			    Matrix[g][m_size+1][0] = 0.0;
-			}
+
+			Matrix[g][N][0] = 0.0;
+			Matrix[g][0][N] = 0.0;
 		}
 	}
-	MPI_Barrier(MPI_COMM_WORLD);
-}
-
-/* ************************************************************************ */
-/* Tauscht die doppelten Zeilen unter den Prozessen aus                     */
-/* ************************************************************************ */
-static 
-void
-shareValues(struct calculation_arguments const* arguments, struct options const* options, int m_in, int iteration) {
-    int const elements = 8 * options->interlines + 9;
-    
-    MPI_Status status;
-
-    int rank_bef, rank_aft;
-    rank_bef = rank - 1;
-    rank_aft = rank + 1;
-    
-    double** Matrix = arguments->Matrix[m_in];
-    
-    if(rank_bef >= 0) {
-        MPI_Send(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank, MPI_COMM_WORLD);
-        MPI_Recv(Matrix[0], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank_bef, MPI_COMM_WORLD, &status);
-    }
-    
-    if(rank_aft < num_procs) {
-        MPI_Recv(Matrix[m_size + 1], elements, MPI_DOUBLE, rank_aft, iteration*num_procs + rank_aft, MPI_COMM_WORLD, &status);
-        MPI_Send(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration*num_procs + rank, MPI_COMM_WORLD);
-    }
 }
 
 /* ************************************************************************ */
@@ -271,8 +198,17 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 
 	int term_iteration = options->term_iteration;
 
-	m1 = 0;
-	m2 = 1;
+	/* initialize m1 and m2 depending on algorithm */
+	if (options->method == METH_JACOBI)
+	{
+		m1 = 0;
+		m2 = 1;
+	}
+	else
+	{
+		m1 = 0;
+		m2 = 0;
+	}
 
 	if (options->inf_func == FUNC_FPISIN)
 	{
@@ -288,13 +224,13 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 		maxresiduum = 0;
 
 		/* over all rows */
-		for (i = 1; i < (m_size + 1); i++)
+		for (i = 1; i < N; i++)
 		{
 			double fpisin_i = 0.0;
 
 			if (options->inf_func == FUNC_FPISIN)
 			{
-				fpisin_i = fpisin * sin(pih * (double)(i + m_from - 1));
+				fpisin_i = fpisin * sin(pih * (double)i);
 			}
 
 			/* over all columns */
@@ -317,34 +253,27 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 				Matrix_Out[i][j] = star;
 			}
 		}
-		
-		double maxres;
-		MPI_Allreduce(&maxresiduum, &maxres, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
 
 		results->stat_iteration++;
-		results->stat_precision = maxres;
+		results->stat_precision = maxresiduum;
 
 		/* exchange m1 and m2 */
 		i = m1;
 		m1 = m2;
 		m2 = i;
-		
-	    /* Austauschen der zusätzlichen zeilen */
-		shareValues(arguments, options, m2, term_iteration);
 
-        
-	    /* check for stopping calculation, depending on termination method */
-	    if (options->termination == TERM_PREC)
-	    {
-		    if (maxres < options->term_precision)
-		    {
-			    term_iteration = 0;
-		    }
-	    }
-	    else if (options->termination == TERM_ITER)
-	    {
-		    term_iteration--;
-	    }
+		/* check for stopping calculation, depending on termination method */
+		if (options->termination == TERM_PREC)
+		{
+			if (maxresiduum < options->term_precision)
+			{
+				term_iteration = 0;
+			}
+		}
+		else if (options->termination == TERM_ITER)
+		{
+			term_iteration--;
+		}
 	}
 
 	results->m = m2;
@@ -362,6 +291,16 @@ displayStatistics (struct calculation_arguments const* arguments, struct calcula
 
 	printf("Berechnungszeit:    %f s \n", time);
 	printf("Speicherbedarf:     %f MiB\n", (N + 1) * (N + 1) * sizeof(double) * arguments->num_matrices / 1024.0 / 1024.0);
+	printf("Berechnungsmethode: ");
+
+	if (options->method == METH_GAUSS_SEIDEL)
+	{
+		printf("Gauss-Seidel");
+	}
+	else if (options->method == METH_JACOBI)
+	{
+		printf("Jacobi");
+	}
 
 	printf("\n");
 	printf("Interlines:         %" PRIu64 "\n",options->interlines);
@@ -394,84 +333,39 @@ displayStatistics (struct calculation_arguments const* arguments, struct calcula
 	printf("\n");
 }
 
-
-/**
- * rank and size are the MPI rank and size, respectively.
- * from and to denote the global(!) range of lines that this process is responsible for.
- *
- * Example with 9 matrix lines and 4 processes:
- * - rank 0 is responsible for 1-2, rank 1 for 3-4, rank 2 for 5-6 and rank 3 for 7.
- *   Lines 0 and 8 are not included because they are not calculated.
- * - Each process stores two halo lines in its matrix (except for ranks 0 and 3 that only store one).
- * - For instance: Rank 2 has four lines 0-3 but only calculates 1-2 because 0 and 3 are halo lines for other processes. It is responsible for (global) lines 5-6.
- */
+/****************************************************************************/
+/** Beschreibung der Funktion DisplayMatrix:                               **/
+/**                                                                        **/
+/** Die Funktion DisplayMatrix gibt eine Matrix                            **/
+/** in einer "ubersichtlichen Art und Weise auf die Standardausgabe aus.   **/
+/**                                                                        **/
+/** Die "Ubersichtlichkeit wird erreicht, indem nur ein Teil der Matrix    **/
+/** ausgegeben wird. Aus der Matrix werden die Randzeilen/-spalten sowie   **/
+/** sieben Zwischenzeilen ausgegeben.                                      **/
+/****************************************************************************/
 static
 void
-DisplayMatrix (struct calculation_arguments* arguments, struct calculation_results* results, struct options* options, int rank, int size, int from, int to)
+DisplayMatrix (struct calculation_arguments* arguments, struct calculation_results* results, struct options* options)
 {
-  int const elements = 8 * options->interlines + 9;
+	int x, y;
 
-  int x, y;
-  double** Matrix = arguments->Matrix[results->m];
-  MPI_Status status;
+	double** Matrix = arguments->Matrix[results->m];
 
-  /* first line belongs to rank 0 */
-  if (rank == 0)
-    from--;
+	int const interlines = options->interlines;
 
-  /* last line belongs to rank size - 1 */
-  if (rank + 1 == size)
-    to++;
+	printf("Matrix:\n");
 
-  if (rank == 0)
-    printf("Matrix:\n");
+	for (y = 0; y < 9; y++)
+	{
+		for (x = 0; x < 9; x++)
+		{
+			printf ("%7.4f", Matrix[y * (interlines + 1)][x * (interlines + 1)]);
+		}
 
-  for (y = 0; y < 9; y++)
-  {
-    int line = y * (options->interlines + 1);
+		printf ("\n");
+	}
 
-    if (rank == 0)
-    {
-      /* check whether this line belongs to rank 0 */
-      if (line < from || line > to)
-      {
-        /* use the tag to receive the lines in the correct order
-         * the line is stored in Matrix[0], because we do not need it anymore */
-        MPI_Recv(Matrix[0], elements, MPI_DOUBLE, MPI_ANY_SOURCE, 42 + y, MPI_COMM_WORLD, &status);
-      }
-    }
-    else
-    {
-      if (line >= from && line <= to)
-      {
-        /* if the line belongs to this process, send it to rank 0
-         * (line - from + 1) is used to calculate the correct local address */
-        MPI_Send(Matrix[line - from + 1], elements, MPI_DOUBLE, 0, 42 + y, MPI_COMM_WORLD);
-      }
-    }
-
-    if (rank == 0)
-    {
-      for (x = 0; x < 9; x++)
-      {
-        
-        int col = x * (options->interlines + 1);
-
-        if (line >= from && line <= to)
-        {
-          /* this line belongs to rank 0 */
-          printf("%7.4f", Matrix[line][col]);
-        }
-        else
-        {
-          /* this line belongs to another rank and was received above */
-          printf("%7.4f", Matrix[0][col]);
-        }
-      }
-      printf("\n");
-    }
-  }
-  fflush(stdout);
+	fflush (stdout);
 }
 
 /* ************************************************************************ */
@@ -479,18 +373,13 @@ DisplayMatrix (struct calculation_arguments* arguments, struct calculation_resul
 /* ************************************************************************ */
 int
 main (int argc, char** argv)
-{  
-	MPI_Init(&argc, &argv);
-	
+{
 	struct options options;
 	struct calculation_arguments arguments;
 	struct calculation_results results;
 
-	MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
 	/* get parameters */
-	AskParams(&options, argc, argv, rank);              /* ************************* */
+	AskParams(&options, argc, argv);              /* ************************* */
 
 	initVariables(&arguments, &results, &options);           /* ******************************************* */
 
@@ -498,15 +387,13 @@ main (int argc, char** argv)
 	initMatrices(&arguments, &options);            /* ******************************************* */
 
 	gettimeofday(&start_time, NULL);                   /*  start timer         */
-	calculate(&arguments, &results, &options);         /*  solve the equation  */
-	gettimeofday(&comp_time, NULL);                    /*  stop timer          */
+	calculate(&arguments, &results, &options);                                      /*  solve the equation  */
+	gettimeofday(&comp_time, NULL);                   /*  stop timer          */
 
-	if(rank == 0) {
-	    displayStatistics(&arguments, &results, &options);
-	}
-	DisplayMatrix(&arguments, &results, &options, rank, num_procs, m_from, m_to);
+	displayStatistics(&arguments, &results, &options);
+	DisplayMatrix(&arguments, &results, &options);
 
 	freeMatrices(&arguments);                                       /*  free memory     */
-    MPI_Finalize();
-	return EXIT_SUCCESS;
+
+	return 0;
 }

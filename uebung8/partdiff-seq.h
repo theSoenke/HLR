@@ -6,7 +6,7 @@
 /** Copyright: Prof. Dr. Thomas Ludwig                                     **/
 /**            Thomas A. Zochler, Andreas C. Schmidt                       **/
 /**                                                                        **/
-/** File:      jacobi_mpi.h                                              **/
+/** File:      partdiff-seq.h                                              **/
 /**                                                                        **/
 /****************************************************************************/
 /****************************************************************************/
@@ -37,6 +37,7 @@
 struct options
 {
 	uint64_t number;         /* Number of threads                              */
+	uint64_t method;         /* Gauss Seidel or Jacobi method of iteration     */
 	uint64_t interlines;     /* matrix size = interlines*8+9                   */
 	uint64_t inf_func;       /* inference function                             */
 	uint64_t termination;    /* termination condition                          */
@@ -51,4 +52,4 @@ struct options
 /* - askparams.c               */
 /* - displaymatrix.c           */
 /* *************************** */
-void AskParams (struct options*, int, char**, int rank);
+void AskParams (struct options*, int, char**);
