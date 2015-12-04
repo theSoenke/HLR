@@ -6,17 +6,17 @@ CFLAGS = -std=c99 -pedantic -Wall -Wextra -O2 -ggdb
 LFLAGS = $(CFLAGS)
 LIBS   = -lm
 
-OBJS = jacobi-mpi.o askparams.o
-OBJSSEQ = partdiff-seq.o askparams-seq.o
+OBJS = partdiff-par.o askparams.o
+OBJSSEQ = partdiff-seq.o askparams.o
 
 # Rule to create *.o from *.c
 .c.o:
 	$(CC) -c $(CFLAGS) $*.c
 
 # Targets ...
-all: jacobi-mpi partdiff-seq
+all: partdiff-par partdiff-seq
 
-jacobi-mpi: $(OBJS) Makefile
+partdiff-par: $(OBJS) Makefile
 	$(CC) $(LFLAGS) -o $@ $(OBJS) $(LIBS)
 	
 partdiff-seq: $(OBJSSEQ) Makefile
@@ -25,10 +25,10 @@ partdiff-seq: $(OBJSSEQ) Makefile
 clean:
 	$(RM) *.o *~
 
-jacobi-mpi.o: jacobi-mpi.c Makefile
+partdiff-par.o: partdiff-par.c Makefile
 
 partdiff-seq.o: partdiff-seq.c Makefile
 
 askparams.o: askparams.c Makefile
 
-askparams-seq.o: askparams-seq.c Makefile
+askparams-seq.o: askparams.c Makefile

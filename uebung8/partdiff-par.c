@@ -27,7 +27,7 @@
 #include <sys/time.h>
 #include <mpi.h>
 
-#include "jacobi-mpi.h"
+#include "partdiff-par.h"
 
 int rank;
 int num_procs;
