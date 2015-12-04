@@ -89,6 +89,9 @@ usage (char* name)
 	printf("Usage: %s [num] [lines] [func] [term] [prec/iter]\n", name);
 	printf("\n");
 	printf("  - num:       number of threads (1 .. %d)\n", MAX_THREADS);
+	printf("  - method:    calculation method (1 .. 2)\n");
+	printf("                 %1d: Gauß-Seidel\n", METH_GAUSS_SEIDEL);
+	printf("                 %1d: Jacobi\n",      METH_JACOBI);
 	printf("  - lines:     number of interlines (0 .. %d)\n", MAX_INTERLINES);
 	printf("                 matrixsize = (interlines * 8) + 9\n");
 	printf("  - func:      interference function (1 .. 2)\n");
@@ -179,6 +182,17 @@ AskParams (struct options* options, int argc, char** argv, int rank)
 			while (getchar() != '\n');
 		}
 		while (ret != 1 || !check_number(options));
+
+
+		if(rank == 0)
+		{
+			printf("\n");
+			printf("Select calculationmethod:\n");
+			printf("  %1d: Gauss-Seidel.\n", METH_GAUSS_SEIDEL);
+			printf("  %1d: Jacobi.\n",       METH_JACOBI);
+			printf("method> ");
+			fflush(stdout);
+		}
 
 		do
 		{
@@ -276,7 +290,7 @@ AskParams (struct options* options, int argc, char** argv, int rank)
 			exit(1);
 		}
 
-		ret = sscanf(argv[2], "%" SCNu64, &(options->interlines));
+		ret = sscanf(argv[3], "%" SCNu64, &(options->interlines));
 
 		if (ret != 1 || !check_interlines(options))
 		{
@@ -284,7 +298,7 @@ AskParams (struct options* options, int argc, char** argv, int rank)
 			exit(1);
 		}
 
-		ret = sscanf(argv[3], "%" SCNu64, &(options->inf_func));
+		ret = sscanf(argv[4], "%" SCNu64, &(options->inf_func));
 
 		if (ret != 1 || !check_inf_func(options))
 		{
@@ -292,7 +306,7 @@ AskParams (struct options* options, int argc, char** argv, int rank)
 			exit(1);
 		}
 
-		ret = sscanf(argv[4], "%" SCNu64, &(options->termination));
+		ret = sscanf(argv[5], "%" SCNu64, &(options->termination));
 
 		if (ret != 1 || !check_termination(options))
 		{
@@ -302,7 +316,7 @@ AskParams (struct options* options, int argc, char** argv, int rank)
 
 		if (options->termination == TERM_PREC)
 		{
-			ret = sscanf(argv[5], "%lf", &(options->term_precision));
+			ret = sscanf(argv[6], "%lf", &(options->term_precision));
 			options->term_iteration = MAX_ITERATION;
 
 			if (ret != 1 || !check_term_precision(options))
@@ -313,7 +327,7 @@ AskParams (struct options* options, int argc, char** argv, int rank)
 		}
 		else
 		{
-			ret = sscanf(argv[5], "%" SCNu64, &(options->term_iteration));
+			ret = sscanf(argv[6], "%" SCNu64, &(options->term_iteration));
 			options->term_precision = 0;
 
 			if (ret != 1 || !check_term_iteration(options))
