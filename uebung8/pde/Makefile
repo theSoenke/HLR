@@ -6,8 +6,8 @@ CFLAGS = -std=c99 -pedantic -Wall -Wextra -O2 -ggdb -fopenmp
 LFLAGS = $(CFLAGS)
 LIBS   = -lm
 
-OBJS = partdiff-par.o askparams-par.o
-OBJSMP = partdiff-par-hybrid.o askparams-par.o
+OBJS = partdiff-par.o askparams.o
+OBJSMP = partdiff-par-hybrid.o askparams.o
 OBJSSEQ = partdiff-seq.o askparams-seq.o
 
 # Rule to create *.o from *.c
@@ -35,6 +35,6 @@ partdiff-par-hybrid.o: partdiff-par-hybrid.c Makefile
 
 partdiff-seq.o: partdiff-seq.c Makefile
 
-askparams-par.o: askparams-par.c Makefile
+askparams-.o: askparams.c Makefile
 
 askparams-seq.o: askparams-seq.c Makefile
