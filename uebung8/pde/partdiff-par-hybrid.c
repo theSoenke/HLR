@@ -84,8 +84,8 @@ initVariables (struct calculation_arguments* arguments, struct calculation_resul
 	results->m = 0;
 	results->stat_iteration = 0;
 	results->stat_precision = 0;
-	
-	
+
+
 	uint64_t  N = arguments->N;
 	m_size = ceil((float)(N-1) / num_procs);
 	m_from = min((m_size * rank + 1), N);
@@ -172,10 +172,10 @@ initMatrices (struct calculation_arguments* arguments, struct options const* opt
 	uint64_t const N = arguments->N;
 	double const h = arguments->h;
 	double*** Matrix = arguments->Matrix;
-	
+
 	uint64_t const m_height = m_size + 2;
-		
-		
+
+
     /* initialize matrix/matrices with zeros */
     for (g = 0; g < arguments->num_matrices; g++)
     {
@@ -224,27 +224,28 @@ initMatrices (struct calculation_arguments* arguments, struct options const* opt
 /* ************************************************************************ */
 /* Tauscht die doppelten Zeilen unter den Prozessen aus                     */
 /* ************************************************************************ */
-static 
+static
 void
 shareValues(struct calculation_arguments const* arguments, struct options const* options, int m_in, int iteration) {
     int const elements = 8 * options->interlines + 9;
-    
+
     MPI_Status status;
+		MPI_Request send_request;
 
     int rank_bef, rank_aft;
     rank_bef = rank - 1;
     rank_aft = rank + 1;
-    
+
     double** Matrix = arguments->Matrix[m_in];
-    
+
     if(rank_bef >= 0) {
-        MPI_Send(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank, MPI_COMM_WORLD);
-        MPI_Recv(Matrix[0], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank_bef, MPI_COMM_WORLD, &status);
+			MPI_Isend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank, MPI_COMM_WORLD, &send_request);
+			MPI_Recv(Matrix[0], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank_bef, MPI_COMM_WORLD, &status);
     }
-    
+
     if(rank_aft < num_procs) {
-        MPI_Recv(Matrix[m_size + 1], elements, MPI_DOUBLE, rank_aft, iteration*num_procs + rank_aft, MPI_COMM_WORLD, &status);
-        MPI_Send(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration*num_procs + rank, MPI_COMM_WORLD);
+			MPI_Isend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration*num_procs + rank, MPI_COMM_WORLD, &send_request);
+			MPI_Recv(Matrix[m_size + 1], elements, MPI_DOUBLE, rank_aft, iteration*num_procs + rank_aft, MPI_COMM_WORLD, &status);
     }
 }
 
@@ -320,7 +321,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 					Matrix_Out[i][j] = star;
 				}
 			}
-		}		
+		}
 
 		double maxres;
 		MPI_Allreduce(&maxresiduum, &maxres, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
@@ -332,11 +333,11 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 		i = m1;
 		m1 = m2;
 		m2 = i;
-		
+
 	    /* Austauschen der zusätzlichen zeilen */
 		shareValues(arguments, options, m2, term_iteration);
 
-        
+
 	    /* check for stopping calculation, depending on termination method */
 	    if (options->termination == TERM_PREC)
 	    {
@@ -458,7 +459,7 @@ DisplayMatrix (struct calculation_arguments* arguments, struct calculation_resul
     {
       for (x = 0; x < 9; x++)
       {
-        
+
         int col = x * (options->interlines + 1);
 
         if (line >= from && line <= to)
@@ -483,9 +484,9 @@ DisplayMatrix (struct calculation_arguments* arguments, struct calculation_resul
 /* ************************************************************************ */
 int
 main (int argc, char** argv)
-{  
+{
 	MPI_Init(&argc, &argv);
-	
+
 	struct options options;
 	struct calculation_arguments arguments;
 	struct calculation_results results;
