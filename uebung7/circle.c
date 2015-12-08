@@ -61,8 +61,7 @@ void circle (int *buf,int rank, int N, int num_procs)
 
 	int steps = 0;
 	int running = 1;
-	int i = 0;
-	while(running && i < num_procs-1)
+	while(running && steps < num_procs-1)
 	{	
 		up_rank = ((rank + 1) % num_procs);
 		down_rank = ((rank - 1) % num_procs);
@@ -75,7 +74,7 @@ void circle (int *buf,int rank, int N, int num_procs)
 			running = 0;			
 		}
 
-        	MPI_Bcast(&running, 1, MPI_INT, num_procs-1, MPI_COMM_WORLD);
+        MPI_Bcast(&running, 1, MPI_INT, num_procs-1, MPI_COMM_WORLD);
 		steps++;
 	}
   

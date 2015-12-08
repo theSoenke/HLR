@@ -73,6 +73,13 @@ Das System benutzt derzeit backfill scheduling.
 froehlich@cluster:~⟫ scontrol show config | grep SchedulerType
 SchedulerType           = sched/backfill
 
+// Nachträglich hinzugefügt
+
+1.11
+> salloc -p cluster -N 1
+
+1.12
+6 Std.
 
 1.13
 Ja, die Priorität eines Jobs lässt sich verändern und zwar

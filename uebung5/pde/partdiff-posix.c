@@ -318,7 +318,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 			thread_args[t].arguments = arguments;
 			thread_args[t].options = options;
 			thread_args[t].term_iteration = term_iteration;
-		        thread_args[t].start = start;
+		    thread_args[t].start = start;
 			thread_args[t].end = end;
 			thread_args[t].maxresiduum = &maxresiduum;
 			thread_args[t].m1 = m1;
@@ -335,8 +335,8 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 
 		for (t = 0; t < num_threads; t++)
 		{
-	            pthread_join(threads[t], NULL);
-        	}
+            pthread_join(threads[t], NULL);
+        }
 		
 
 		results->stat_iteration++;

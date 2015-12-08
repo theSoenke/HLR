@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // Definieren Sie ein enum cardd
@@ -28,7 +29,8 @@ char* get_dir(int x, int y) {
     if(x >= 0 && x < 3      // X liegt zwischen 0 und 2 
         && y >= 0 && y < 3)  // Y liegt zwischen 0 und 2
     {
-        char* rueckgabe;
+        char *rueckgabe;
+        
         // Hier werden einfach nur die Dezimalwerte der oben angegebenen
         // binären Werte abgefragt und der dazugehörige Wert wird
         // geprintet.
@@ -54,6 +56,7 @@ char* get_dir(int x, int y) {
         }
         return rueckgabe;
     }
+    return "";
 }
 
 // Die Funktion show_map soll das Array in Form einer 3x3-Matrix ausgeben
