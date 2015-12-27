@@ -249,6 +249,59 @@ shareValues(struct calculation_arguments const* arguments, struct options const*
     }
 }
 
+
+/* ************************************************************************ */
+/* Empfängt die Daten die zur nächsten Berechnung benötigt werden           */
+/* Iteration (0 ... n) ist ein aufsteigender Wert. Nicht verbl. Iteration   */
+/* ************************************************************************ */
+static
+void
+recvValues(struct calculation_arguments const* arguments, struct options const* options, int m_in, int iteration) {
+    int const elements = 8 * options->interlines + 9;
+
+    MPI_Status status;
+
+    int rank_bef, rank_aft;
+    rank_bef = rank - 1;
+    rank_aft = rank + 1;
+
+    double** Matrix = arguments->Matrix[m_in];
+
+    /* Vom vorherigen Rang empfangen.*/
+    if(rank_bef >= 0) {
+        MPI_Recv(Matrix[0], elements, MPI_DOUBLE, rank_bef, iteration, MPI_COMM_WORLD, &status);
+    }
+
+    /* Vom nachfolgenden Rang empfangen. Erst nach erster Iteration */
+    if(rank_aft < num_procs && iteration > 0) {
+        MPI_Recv(Matrix[m_size + 1], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD, &status);
+    }
+}
+
+/* ************************************************************************ */
+/* Sendet die Daten der letzten Berechnung                                  */
+/* Iteration (0 ... n) ist ein aufsteigender Wert. Nicht verbl. Iteration   */
+/* ************************************************************************ */
+static
+void
+sendValues(struct calculation_arguments const* arguments, struct options const* options, int m_in, int iteration) {
+    int const elements = 8 * options->interlines + 9;
+
+    int rank_bef, rank_aft;
+    rank_bef = rank - 1;
+    rank_aft = rank + 1;
+
+    double** Matrix = arguments->Matrix[m_in];
+
+    if(rank_bef >= 0) {
+        MPI_Bsend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration, MPI_COMM_WORLD);
+    }
+
+    if(rank_aft < num_procs) {
+        MPI_Bsend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD);
+    }
+}
+
 /* ************************************************************************ */
 /* calculate: solves the equation                                           */
 /* ************************************************************************ */
@@ -256,6 +309,7 @@ static
 void
 calculate (struct calculation_arguments const* arguments, struct calculation_results *results, struct options const* options)
 {
+    printf("RANK: %d \n", rank);
     int i, j;                                   /* local variables for loops  */
     int m1, m2;                                 /* used as indices for old and new matrices       */
     double star;                                /* four times center value minus 4 neigh.b values */
@@ -268,7 +322,12 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
     double pih = 0.0;
     double fpisin = 0.0;
 
+    int iterations_nr = 0;
+
     int term_iteration = options->term_iteration;
+
+    /* Will be changed for precision, to finish the calculation */
+    uint64_t local_termination = options->termination;
 
     /* initialize m1 and m2 depending on algorithm */
 	if (options->method == METH_JACOBI)
@@ -292,6 +351,12 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
     {
         double** Matrix_Out = arguments->Matrix[m1];
         double** Matrix_In  = arguments->Matrix[m2];
+
+        if (options->method == METH_GAUSS_SEIDEL)
+    	{
+            /* Empfangen der zusätzlichen zeilen */
+            recvValues(arguments, options, m1, iterations_nr);
+        }
 
         maxresiduum = 0;
 
@@ -326,11 +391,29 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
             }
         }
 
-        printf("METHOD: %d\n", options->method);
 
         if (options->method == METH_JACOBI)
     	{
             MPI_Allreduce(MPI_IN_PLACE, &maxresiduum, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+
+            /* Austauschen der zusätzlichen zeilen */
+            shareValues(arguments, options, m1, term_iteration);
+        }
+        else if (options->method == METH_GAUSS_SEIDEL)
+    	{
+            /* Senden der zusätzlichen zeilen */
+            sendValues(arguments, options, m1, iterations_nr);
+
+            /* Allreduce nur solange möglich */
+            if(iterations_nr + rank >= num_procs) {
+                if((local_termination == TERM_ITER && rank <= term_iteration)
+                    /* Der erste Prozess ist noch nicht fertig */
+                    || local_termination == TERM_PREC
+                    /* Es steht noch auf PREC also auch erster Rang nicht fertig. */)
+                {
+                    MPI_Allreduce(MPI_IN_PLACE, &maxresiduum, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+                }
+            }
         }
 
         results->stat_iteration++;
@@ -341,22 +424,31 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
         m1 = m2;
         m2 = i;
 
-        /* Austauschen der zusätzlichen zeilen */
-        shareValues(arguments, options, m2, term_iteration);
-
 
         /* check for stopping calculation, depending on termination method */
-        if (options->termination == TERM_PREC)
+        if (local_termination == TERM_PREC)
         {
             if (maxresiduum < options->term_precision)
             {
-                term_iteration = 0;
+                /* Restliche Iterationen ausführen */
+                local_termination = TERM_ITER;
+                term_iteration = rank;
             }
         }
-        else if (options->termination == TERM_ITER)
+        else if (local_termination == TERM_ITER)
         {
             term_iteration--;
         }
+
+        iterations_nr++;
+    }
+
+    if (options->method == METH_GAUSS_SEIDEL)
+    {
+        MPI_Barrier(MPI_COMM_WORLD); /* k.a. ob benötigt */
+
+        MPI_Allreduce(MPI_IN_PLACE, &maxresiduum, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        results->stat_precision = maxresiduum;
     }
 
     results->m = m2;
