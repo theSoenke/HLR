@@ -7,7 +7,6 @@ LFLAGS = $(CFLAGS)
 LIBS   = -lm
 
 OBJS = partdiff-par.o askparams.o
-OBJSMP = partdiff-par-hybrid.o askparams.o
 OBJSSEQ = partdiff-seq.o askparams-seq.o
 
 # Rule to create *.o from *.c
@@ -15,23 +14,18 @@ OBJSSEQ = partdiff-seq.o askparams-seq.o
 	$(CC) -c $(CFLAGS) $*.c
 
 # Targets ...
-all: partdiff-par partdiff-seq partdiff-par-hybrid
+all: partdiff-par partdiff-seq 
 
 partdiff-par: $(OBJS) Makefile
 	$(CC) $(LFLAGS) -o $@ $(OBJS) $(LIBS)
 
-partdiff-par-hybrid: $(OBJSMP) Makefile
-	$(CC) $(LFLAGS) -o $@ $(OBJSMP) $(LIBS)
-	
 partdiff-seq: $(OBJSSEQ) Makefile
 	$(CC) $(LFLAGS) -o $@ $(OBJSSEQ) $(LIBS)
 
 clean:
-	$(RM) *.o *~ partdiff-par partdiff-par-hybrid partdiff-seq
+	$(RM) *.o *~ partdiff-par partdiff-seq
 
 partdiff-par.o: partdiff-par.c Makefile
-
-partdiff-par-hybrid.o: partdiff-par-hybrid.c Makefile
 
 partdiff-seq.o: partdiff-seq.c Makefile
 

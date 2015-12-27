@@ -269,6 +269,7 @@ recvValues(struct calculation_arguments const* arguments, struct options const* 
 
     /* Vom vorherigen Rang empfangen.*/
     if(rank_bef >= 0) {
+        //printf("recv bef %d\n", iteration);
         MPI_Recv(Matrix[0], elements, MPI_DOUBLE, rank_bef, iteration, MPI_COMM_WORLD, &status);
     }
 
@@ -294,11 +295,17 @@ sendValues(struct calculation_arguments const* arguments, struct options const* 
     double** Matrix = arguments->Matrix[m_in];
 
     if(rank_bef >= 0) {
-        MPI_Bsend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration, MPI_COMM_WORLD);
+        MPI_Request request;
+        //MPI_Bsend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration, MPI_COMM_WORLD);
+        MPI_Isend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration+1, MPI_COMM_WORLD, &request);
+        MPI_Request_free(&request);
     }
 
     if(rank_aft < num_procs) {
-        MPI_Bsend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD);
+        MPI_Request request;
+        //MPI_Bsend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD);
+        MPI_Isend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD, &request);
+        MPI_Request_free(&request);
     }
 }
 
@@ -353,7 +360,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
         double** Matrix_In  = arguments->Matrix[m2];
 
         if (options->method == METH_GAUSS_SEIDEL)
-    	{
+    	  {
             /* Empfangen der zusätzlichen zeilen */
             recvValues(arguments, options, m1, iterations_nr);
         }
