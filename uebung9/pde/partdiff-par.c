@@ -316,7 +316,6 @@ static
 void
 calculate (struct calculation_arguments const* arguments, struct calculation_results *results, struct options const* options)
 {
-    printf("RANK: %d \n", rank);
     int i, j;                                   /* local variables for loops  */
     int m1, m2;                                 /* used as indices for old and new matrices       */
     double star;                                /* four times center value minus 4 neigh.b values */
@@ -398,7 +397,6 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
             }
         }
 
-
         if (options->method == METH_JACOBI)
     	{
             MPI_Allreduce(MPI_IN_PLACE, &maxresiduum, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
@@ -413,7 +411,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 
             /* Allreduce nur solange möglich */
             if(iterations_nr + rank >= num_procs) {
-                if((local_termination == TERM_ITER && rank <= term_iteration)
+                if((local_termination == TERM_ITER && rank < term_iteration)
                     /* Der erste Prozess ist noch nicht fertig */
                     || local_termination == TERM_PREC
                     /* Es steht noch auf PREC also auch erster Rang nicht fertig. */)
