@@ -239,7 +239,7 @@ shareValues(struct calculation_arguments const* arguments, struct options const*
     double** Matrix = arguments->Matrix[m_in];
 
     if(rank_bef >= 0) {
-          MPI_Isend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank, MPI_COMM_WORLD, &send_request);
+        MPI_Isend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank, MPI_COMM_WORLD, &send_request);
         MPI_Recv(Matrix[0], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank_bef, MPI_COMM_WORLD, &status);
     }
 
@@ -269,7 +269,6 @@ recvValues(struct calculation_arguments const* arguments, struct options const* 
 
     /* Vom vorherigen Rang empfangen.*/
     if(rank_bef >= 0) {
-        //printf("recv bef %d\n", iteration);
         MPI_Recv(Matrix[0], elements, MPI_DOUBLE, rank_bef, iteration, MPI_COMM_WORLD, &status);
     }
 
@@ -355,11 +354,12 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
 
     while (term_iteration > 0)
     {
+
         double** Matrix_Out = arguments->Matrix[m1];
         double** Matrix_In  = arguments->Matrix[m2];
 
         if (options->method == METH_GAUSS_SEIDEL)
-    	  {
+    	{
             /* Empfangen der zusätzlichen zeilen */
             recvValues(arguments, options, m1, iterations_nr);
         }
@@ -433,7 +433,9 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
         /* check for stopping calculation, depending on termination method */
         if (local_termination == TERM_PREC)
         {
-            if (maxresiduum < options->term_precision)
+            if (maxresiduum < options->term_precision
+                && iterations_nr + rank >= num_procs
+                /* Jeder Rang hat mindestens eine iteration ausgeführt */)
             {
                 /* Restliche Iterationen ausführen */
                 local_termination = TERM_ITER;
