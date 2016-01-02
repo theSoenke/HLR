@@ -295,14 +295,12 @@ sendValues(struct calculation_arguments const* arguments, struct options const* 
 
     if(rank_bef >= 0) {
         MPI_Request request;
-        //MPI_Bsend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration, MPI_COMM_WORLD);
         MPI_Isend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration+1, MPI_COMM_WORLD, &request);
         MPI_Request_free(&request);
     }
 
     if(rank_aft < num_procs) {
         MPI_Request request;
-        //MPI_Bsend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD);
         MPI_Isend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD, &request);
         MPI_Request_free(&request);
     }
