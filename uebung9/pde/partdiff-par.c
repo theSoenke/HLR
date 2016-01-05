@@ -256,7 +256,7 @@ shareValues(struct calculation_arguments const* arguments, struct options const*
 /* ************************************************************************ */
 static
 void
-recvValues(struct calculation_arguments const* arguments, struct options const* options, int m_in, int iteration, void* buffer, int buffer_size) {
+recvValues(struct calculation_arguments const* arguments, struct options const* options, int m_in, int iteration) {
     int const elements = 8 * options->interlines + 9;
 
     MPI_Status status;
@@ -276,8 +276,6 @@ recvValues(struct calculation_arguments const* arguments, struct options const* 
     if(rank_aft < num_procs && iteration > 0) {
         MPI_Recv(Matrix[m_size + 1], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD, &status);
     }
-
-    MPI_Buffer_detach(buffer, &buffer_size);
 }
 
 /* ************************************************************************ */
@@ -286,7 +284,7 @@ recvValues(struct calculation_arguments const* arguments, struct options const* 
 /* ************************************************************************ */
 static
 void
-sendValues(struct calculation_arguments const* arguments, struct options const* options, int m_in, int iteration, void * buffer, int buffer_size) {
+sendValues(struct calculation_arguments const* arguments, struct options const* options, int m_in, int iteration) {
     int const elements = 8 * options->interlines + 9;
 
     int rank_bef, rank_aft;
@@ -295,21 +293,16 @@ sendValues(struct calculation_arguments const* arguments, struct options const* 
 
     double** Matrix = arguments->Matrix[m_in];
 
-
-    MPI_Buffer_attach(buffer, buffer_size);
-
     if(rank_bef >= 0) {
-        //MPI_Request request;
-        MPI_Bsend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration+1, MPI_COMM_WORLD);
-        /* MPI_Isend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration+1, MPI_COMM_WORLD, &request);
-        MPI_Request_free(&request); */
+        MPI_Request request;
+        MPI_Isend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration+1, MPI_COMM_WORLD, &request);
+        MPI_Request_free(&request);
     }
 
     if(rank_aft < num_procs) {
-        //MPI_Request request;
-        MPI_Bsend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD);
-        /* MPI_Isend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD, &request);
-        MPI_Request_free(&request); */
+        MPI_Request request;
+        MPI_Isend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration, MPI_COMM_WORLD, &request);
+        MPI_Request_free(&request);
     }
 }
 
@@ -335,9 +328,6 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
     int iterations_nr = 0;
 
     int term_iteration = options->term_iteration;
-
-    void * mpi_buffer = (void *) allocateMemory((8 * options->interlines + 9) * 2 * sizeof(double));
-    int mpi_buffer_size = (8 * options->interlines + 9) * 2 * sizeof(double);
 
     /* Will be changed for precision, to finish the calculation */
     uint64_t local_termination = options->termination;
@@ -369,7 +359,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
         if (options->method == METH_GAUSS_SEIDEL)
     	{
             /* Empfangen der zusätzlichen zeilen */
-            recvValues(arguments, options, m1, iterations_nr, &mpi_buffer, mpi_buffer_size);
+            recvValues(arguments, options, m1, iterations_nr);
         }
 
         maxresiduum = 0;
@@ -415,7 +405,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
         else if (options->method == METH_GAUSS_SEIDEL)
     	{
             /* Senden der zusätzlichen zeilen */
-            sendValues(arguments, options, m1, iterations_nr, &mpi_buffer, mpi_buffer_size);
+            sendValues(arguments, options, m1, iterations_nr);
 
             /* Allreduce nur solange möglich */
             if(iterations_nr + ((rank + 1) / 2) >= (num_procs / 2)) {
