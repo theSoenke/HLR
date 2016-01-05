@@ -418,10 +418,11 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
             sendValues(arguments, options, m1, iterations_nr, &mpi_buffer, mpi_buffer_size);
 
             /* Allreduce nur solange möglich */
-            if(iterations_nr + rank >= num_procs) {
+            if(iterations_nr + ((rank + 1) / 2) >= (num_procs / 2)) {
                 if(local_termination == TERM_PREC
                     /* Es steht noch auf PREC also auch erster Rang nicht fertig. */)
                 {
+                    //printf("Allreduce Rang %d, iteration %d\n", rank, iterations_nr);
                     MPI_Allreduce(MPI_IN_PLACE, &maxresiduum, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
                 }
             }
@@ -445,7 +446,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
             {
                 /* Restliche Iterationen ausführen */
                 local_termination = TERM_ITER;
-                term_iteration = rank;
+                term_iteration = (rank + 1) / 2;
             }
         }
         else if (local_termination == TERM_ITER)
