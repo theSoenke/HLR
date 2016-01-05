@@ -318,6 +318,7 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
     double star;                                /* four times center value minus 4 neigh.b values */
     double residuum;                            /* residuum of current iteration                  */
     double maxresiduum;                         /* maximum residuum value of a slave in iteration */
+    double localmax;
 
     int const N = arguments->N;
     double const h = arguments->h;
@@ -395,6 +396,9 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
             }
         }
 
+        /** Damit eigentlicher Wert fuer abschliessendes Allreduce beibehalten bleibt */
+        localmax = maxresiduum;
+
         if (options->method == METH_JACOBI)
     	{
             MPI_Allreduce(MPI_IN_PLACE, &maxresiduum, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
@@ -451,8 +455,8 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
     {
         MPI_Barrier(MPI_COMM_WORLD); /* k.a. ob benötigt */
 
-        MPI_Allreduce(MPI_IN_PLACE, &maxresiduum, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
-        results->stat_precision = maxresiduum;
+        MPI_Allreduce(MPI_IN_PLACE, &localmax, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+        results->stat_precision = localmax;
     }
 
     results->m = m2;
