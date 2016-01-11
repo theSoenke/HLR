@@ -436,18 +436,18 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
         /* check for stopping calculation, depending on termination method */
         if (local_termination == TERM_PREC)
         {
-            if (maxresiduum < options->term_precision
-                && iterations_nr + rank >= num_procs
-                /* Jeder Rang hat mindestens eine iteration ausgeführt */)
-            {
-                /* Restliche Iterationen ausführen */
-                if (options->method == METH_GAUSS_SEIDEL) {
-                    local_termination = TERM_ITER;
-                    term_iteration = (rank + 1) / 2;
+            /* Restliche Iterationen ausführen */
+            if (options->method == METH_GAUSS_SEIDEL) {
+                if (maxresiduum < options->term_precision
+                    && iterations_nr + rank >= num_procs
+                    /* Jeder Rang hat mindestens eine iteration ausgeführt */)
+                {
+                        local_termination = TERM_ITER;
+                        term_iteration = (rank + 1) / 2;
                 }
-                else {
-                    term_iteration = 0;
-                }
+            }
+            else if(maxresiduum < options->term_precision ) {
+                term_iteration = 0;
             }
         }
         else if (local_termination == TERM_ITER)
