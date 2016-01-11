@@ -240,11 +240,13 @@ shareValues(struct calculation_arguments const* arguments, struct options const*
 
     if(rank_bef >= 0) {
         MPI_Isend(Matrix[1], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank, MPI_COMM_WORLD, &send_request);
+        MPI_Request_free(&send_request);
         MPI_Recv(Matrix[0], elements, MPI_DOUBLE, rank_bef, iteration*num_procs + rank_bef, MPI_COMM_WORLD, &status);
     }
 
     if(rank_aft < num_procs) {
         MPI_Isend(Matrix[m_size], elements, MPI_DOUBLE, rank_aft, iteration*num_procs + rank, MPI_COMM_WORLD, &send_request);
+        MPI_Request_free(&send_request);
         MPI_Recv(Matrix[m_size + 1], elements, MPI_DOUBLE, rank_aft, iteration*num_procs + rank_aft, MPI_COMM_WORLD, &status);
     }
 }
@@ -439,8 +441,13 @@ calculate (struct calculation_arguments const* arguments, struct calculation_res
                 /* Jeder Rang hat mindestens eine iteration ausgeführt */)
             {
                 /* Restliche Iterationen ausführen */
-                local_termination = TERM_ITER;
-                term_iteration = (rank + 1) / 2;
+                if (options->method == METH_GAUSS_SEIDEL) {
+                    local_termination = TERM_ITER;
+                    term_iteration = (rank + 1) / 2;
+                }
+                else {
+                    term_iteration = 0;
+                }
             }
         }
         else if (local_termination == TERM_ITER)
