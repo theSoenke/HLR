@@ -1,5 +1,5 @@
 # Common definitions
-CC = vtcc -vt:cc mpicc
+CC = mpicc # vtcc -vt:cc mpicc
 
 # Compiler flags, paths and libraries
 CFLAGS = -std=c99 -pedantic -Wall -Wextra -O2 -ggdb -fopenmp
@@ -14,7 +14,7 @@ OBJSSEQ = partdiff-seq.o askparams-seq.o
 	$(CC) -c $(CFLAGS) $*.c
 
 # Targets ...
-all: partdiff-par partdiff-seq 
+all: partdiff-par partdiff-seq
 
 partdiff-par: $(OBJS) Makefile
 	$(CC) $(LFLAGS) -o $@ $(OBJS) $(LIBS)

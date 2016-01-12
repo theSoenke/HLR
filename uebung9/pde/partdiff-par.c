@@ -481,6 +481,16 @@ displayStatistics (struct calculation_arguments const* arguments, struct calcula
 
     printf("Berechnungszeit:    %f s \n", time);
     printf("Speicherbedarf:     %f MiB\n", (N + 1) * (N + 1) * sizeof(double) * arguments->num_matrices / 1024.0 / 1024.0);
+    printf("Berechnungsmethode: ");
+
+    if (options->method == METH_GAUSS_SEIDEL)
+    {
+        printf("Gauss-Seidel");
+    }
+    else if (options->method == METH_JACOBI)
+    {
+        printf("Jacobi");
+    }
 
     printf("\n");
     printf("Interlines:         %" PRIu64 "\n",options->interlines);
